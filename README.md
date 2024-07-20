@@ -32,7 +32,7 @@ LG U+나 쿠쿠와 같은 대기업의 사례를 보면 AICC의 도입으로 재
 ## UI
 ![350707716-5aa038d0-3c66-4557-ab09-1de46d74d288](https://github.com/user-attachments/assets/a8c7af83-ff8e-4472-9eeb-50360e112d8a)
 
-⚙️ 시스템 아키텍처
+## ⚙️ 시스템 아키텍처
 ![350707464-fb9b22ba-7dbc-4762-aa8d-0a374f5b7ac2](https://github.com/user-attachments/assets/ca5d7bd9-022f-4a02-a985-265cda524ea3)
 
 
