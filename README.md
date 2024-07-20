@@ -41,3 +41,14 @@ LG U+나 쿠쿠와 같은 대기업의 사례를 보면 AICC의 도입으로 재
 - LLM의 요청과 응답, 채팅 로그의 저장 등의 이벤트 기반 데이터 처리를 위해 Apache Kafka를 사용하는데, AWS에 맞춰서 배포부터 운영을 담당하는 Amazon MSK를 사용합니다.
 - 로그데이터를 저장할 mongoDB와 대용량의 텍스트 데이터를 빠르게 색인하고 검색할 수 있게 elastic search로 mongoDB의 로그를 조회, 저장합니다. 이 로그 데이터들을 Input으로 Flan-t5모델에 넣습니다. Output인 요약문은 MYSQL에 고객정보와함께 저장됩니다.
 
+⚙️ AI
+![image](https://github.com/user-attachments/assets/8d0dcdc9-2b04-4483-ad0f-dcb4d3073115)
+![image](https://github.com/user-attachments/assets/2459101e-e2fc-4869-a31d-e7205110a951)
+![image](https://github.com/user-attachments/assets/30b3a211-3e3e-4580-87ac-30b61ff58b0f)
+![image](https://github.com/user-attachments/assets/174affba-6b00-47ae-b473-1610a0f28707)
+
+
+
+
+
+
