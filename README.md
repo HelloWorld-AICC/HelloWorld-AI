@@ -1,2 +1,2 @@
-# AI_modeling
+# AI
 AI model &amp; data
