@@ -1,6 +1,8 @@
 # Hello World
 안녕하세요! 저희는 외국인 노동자를 위한 지원센터 AICC 어플을 개발하는 "끝까지 간다" 팀입니다😄
 
+[AI 개발 레포](https://github.com/yeowonh/HelloWorld-AI)
+
 [서버 레포](https://github.com/HelloWorld-AICC/HelloWorld-Server) | [프론트 레포](https://github.com/HelloWorld-AICC/HelloWorld-Front)
 
 ## 💡 개발 동기
