@@ -45,6 +45,7 @@ LG U+나 쿠쿠와 같은 대기업의 사례를 보면 AICC의 도입으로 재
 - 로그데이터를 저장할 mongoDB와 대용량의 텍스트 데이터를 빠르게 색인하고 검색할 수 있게 elastic search로 mongoDB의 로그를 조회, 저장합니다. 이 로그 데이터들을 Input으로 Flan-t5모델에 넣습니다. Output인 요약문은 MYSQL에 고객정보와함께 저장됩니다.
 
 ## ⚙️ AI
+![Group 28](https://github.com/user-attachments/assets/b63defe3-217a-464b-87fc-18001aaa5692)
 
 
 
