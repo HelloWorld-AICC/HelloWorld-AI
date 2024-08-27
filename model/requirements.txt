@@ -1,0 +1,8 @@
+flask
+flask-cors
+python-dotenv
+langchain-openai
+langchain-core
+langchain-elasticsearch
+elasticsearch
+torch
