@@ -3,6 +3,9 @@ flask-cors
 python-dotenv
 langchain-openai
 langchain-core
-langchain-elasticsearch
+langchain-mongodb
 elasticsearch
 torch
+python-dotenv
+transformers
+pymongo
