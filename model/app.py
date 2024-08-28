@@ -49,15 +49,7 @@ except Exception as e:
     print(f"Error loading database: {str(e)}")
 
 
-#GPT 연동
-def generate_ai_response(conversation_history,query,db):
-
-    llm = ChatOpenAI(model="gpt-3.5-turbo-0125",
-                        temperature=0,  # 창의성 (0.0 ~ 2.0)
-                        max_tokens=4096,  # 최대 토큰수
-                        openai_api_key=OPENAI_KEY)
-
-    template_text = """
+prompt_question = """
     당신은 한국의 외국인 근로자를 위한 법률 및 비자 전문 AI 어시스턴트입니다. 다음 지침을 따라 응답해 주세요:
 
     1. 관련 문서의 정보를 바탕으로 정확하고 최신의 법률 및 비자 정보를 제공하세요.
@@ -76,18 +68,71 @@ def generate_ai_response(conversation_history,query,db):
     {conversation_history}
     """
 
+prompt_resume = """
+    회사명: DeepSales
+    업무명: Inbound Sales Representatives
+    구분: 무역·영업·판매·매장관리
+    경력사항: 경력무관
+    고용 형태: 인턴
+    직업설명: This is a full-time on-site role as an Inbound Sales Representative at DeepSales in Daechi-dong. The Inbound Sales Representative will be responsible for inside sales, communication, customer service, order processing, and account management tasks on a daily basis. 
+    직업요구사항: Inside Sales and Account Management skills
+    Strong Communication and Customer Service abilities
+    Experience in Order Processing
+    Excellent interpersonal and problem-solving skills
+    Knowledge of sales processes and CRM software
+    Ability to work well in a team setting
+    Previous experience in a sales or customer-facing role
+    Bachelor& #39;s degree in Business Administration or related field
+    지원지침: {Instructions}
+    추가정보:Welcome to DeepSales, a leader in sales intelligence and data innovation, established in 2021 in Seoul& #39;s Gangnam-gu district. DeepSales empowers sales managers and businesses globally with advanced platform leveraging deep learning technologies for actionable insights. Our goal is to maximize sales potential through intelligent data-driven insights and efficiency in sales processes.
+"""
+
+
+
+
+#GPT 연동
+def generate_ai_response(conversation_history = None,prompt = None,query = None,db = None):
+
+    llm = ChatOpenAI(model="gpt-3.5-turbo-0125",
+                        temperature=0,  # 창의성 (0.0 ~ 2.0)
+                        max_tokens=4096,  # 최대 토큰수
+                        openai_api_key=OPENAI_KEY)
+
     similar_docs = db.similarity_search(query, k=3)
 
     # 검색된 문서의 내용을 하나의 문자열로 결합
     context = " ".join([doc.page_content for doc in similar_docs])
 
     # 템플릿 설정
-    prompt_template = PromptTemplate.from_template(template_text)
+    prompt_template = PromptTemplate.from_template(prompt)
 
     # 템플릿에 값을 채워서 프롬프트를 완성
     filled_prompt = prompt_template.format(context = context, conversation_history= conversation_history)
     
     output = llm.invoke(input = filled_prompt)
+    
+    return output.content
+
+#GPT 연동
+def generate_ai_resume(prompt = None,query = None,db = None):
+
+    llm = ChatOpenAI(model="gpt-3.5-turbo-0125",
+                        temperature=0,  # 창의성 (0.0 ~ 2.0)
+                        max_tokens=4096,  # 최대 토큰수
+                        openai_api_key=OPENAI_KEY)
+
+    # similar_docs = db.similarity_search(query, k=3)
+
+    # # 검색된 문서의 내용을 하나의 문자열로 결합
+    # context = " ".join([doc.page_content for doc in similar_docs])
+
+    # 템플릿 설정
+    prompt_template = PromptTemplate.from_template(prompt)
+
+    # 템플릿에 값을 채워서 프롬프트를 완성
+    #filled_prompt = prompt_template.format(context = context, conversation_history= conversation_history)
+    
+    output = llm.invoke(input = prompt_template)
     
     return output.content
 
@@ -122,7 +167,7 @@ def question():
         logger.info(f"Extracted user query: {user_query}")  # 추출된 사용자 쿼리 로깅
 
         # AI 응답 생성
-        answer = generate_ai_response(conversation, user_query, db)
+        answer = generate_ai_response(conversation,prompt_question, user_query, db)
         logger.info(f"Generated AI response: {answer}")  # 생성된 AI 응답 로깅
 
         # AI 응답을 텍스트로 직접 반환
@@ -130,6 +175,27 @@ def question():
 
     except Exception as e:
         logger.error(f"Error processing question: {str(e)}")
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+    
+
+
+
+@app.route('/resume', methods=['POST'])
+def resume():
+    
+    try:
+        data = request.get_json()
+        logger.info(f"Received data: {data}")  # 받은 데이터 로깅
+
+        # AI 응답 생성
+        answer = generate_ai_response(prompt = prompt_question, db = db)
+        logger.info(f"Generated AI response: {answer}")  # 생성된 AI 응답 로깅
+
+        # AI 응답을 텍스트로 직접 반환
+        return answer, 200  # 200은 HTTP 성공 상태 코드입니다
+
+    except Exception as e:
+        logger.error(f"Error processing resume: {str(e)}")
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
