@@ -15,7 +15,8 @@
     
     "path": {
         "data_file_name": "preprocessed.json",
-        "db_name": "helloworld9"
+        "db_name": "HelloWorld-AI",
+        "collection_name": "foreigner_legalQA"
     },
 
     "chat_inference" : {
