@@ -43,7 +43,7 @@ def main(config: Dict):
     print("## chunk_size : ", args.chunk_size)
     print("## overlap_size : ", args.overlap_size)
 
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small") # model?
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-large") # model?
 
     client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"])
 

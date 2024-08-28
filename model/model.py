@@ -7,21 +7,33 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 from langchain_elasticsearch import ElasticsearchStore
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
+from pymongo import MongoClient
 
 # dotenv setting
 from dotenv import load_dotenv
 load_dotenv(verbose=True)
-ES_CLOUD_ID = os.getenv("ES_CLOUD_ID")
-ES_USER = os.getenv("ES_USER")
-ES_PASSWORD = os.getenv("ES_PASSWORD")
-ES_API_KEY = os.getenv("ES_API_KEY")
-OPENAI_KEY = os.getenv("OPENAI_KEY")
 
-CONFIG_NAME = "config.json"
+CONFIG_NAME = "mongo_config.json"
+
 print("## config_name : ", CONFIG_NAME)
 
 with open(f'configs/{CONFIG_NAME}', 'r') as f:
     config = json.load(f)
+
+if config['db'] == 'elasticsearch':
+    os.environ["ES_CLOUD_ID"] = os.getenv("ES_CLOUD_ID")
+    os.environ["ES_USER"] = os.getenv("ES_USER")
+    os.environ['ES_PASSWOR'] = os.getenv("ES_PASSWORD")
+    os.environ["ES_API_KEY"] = os.getenv("ES_API_KEY")
+
+elif config['db'] == 'mongo':
+   os.environ["MONGODB_ATLAS_CLUSTER_URI"] = os.getenv("MONGODB_ATLAS_CLUSTER_URI")
+
+
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_KEY")
+
+
 
 # socket 설정 : 모델 다운로드 중 연결 끊김 방지
 import socket
@@ -29,15 +41,21 @@ socket.setdefaulttimeout(500)
 
 def load_db():
     torch.cuda.empty_cache()
-    return ElasticsearchStore(
-        es_cloud_id=ES_CLOUD_ID,
-        #es_user=ES_USER,
-        #es_password=ES_PASSWORD,
-        es_api_key=ES_API_KEY,
-        index_name=config['path']['db_name'],
-        embedding = OpenAIEmbeddings(openai_api_key=OPENAI_KEY)
+    if config['db'] == 'elasticsearch':
+        return ElasticsearchStore(
+            index_name=config['path']['db_name'],
+            embedding = OpenAIEmbeddings()
+        )
+    elif config['db'] == 'mongo':
+       client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"])
+       MONGODB_COLLECTION = client[config['db_name']][config['collection_name']]
+       return MongoDBAtlasVectorSearch(
+        collection = MONGODB_COLLECTION,
+        embedding = OpenAIEmbeddings(model="text-embedding-3-large"),
+        index_name = config['collection_name'],
+        relevance_score_fn = "cosine" # [cosine, euclidean, dotProduct]
     )
-
+       
 def load_tokenizer():
     tokenizer = AutoTokenizer.from_pretrained(config['config']['model_id'])
     tokenizer.pad_token = tokenizer.eos_token

@@ -1,6 +1,7 @@
 {
     "seed": 42,
     "device" : "cuda:0",
+    "db" : "mongo",
 
     "config": {
         "model_id" : "MLP-KTLim/llama-3-Korean-Bllossom-8B",
@@ -28,6 +29,16 @@
         "top_p" : 0.95,
         "no_repeat_ngram_size" : 0,
         "repeat_penalty" : 1.4
+    },
+
+    "openai_chat_inference" : {
+        "model" : "gpt-3.5-turbo-0125",
+        "frequency_penalty" : 0.5,
+        "logprobs" : true,
+        "top_logprobs" : 10,
+        "max_tokens" : 1024,
+        "stop" : null,
+        "temperature" : 0.7
     },
 
     "summary_inference" : {
