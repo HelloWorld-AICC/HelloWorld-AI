@@ -62,7 +62,7 @@ try:
         db = MongoDBAtlasVectorSearch(
             collection = MONGODB_COLLECTION,
             embedding = OpenAIEmbeddings(model="text-embedding-3-large"),
-            index_name = config['path']['collection_name'],
+            index_name = config['path']['index_name'],
             relevance_score_fn = "cosine" # [cosine, euclidean, dotProduct]
         )
     else:
@@ -104,6 +104,9 @@ def generate_ai_response(conversation_history,query,db):
     """
 
     similar_docs = db.similarity_search(query, k=3)
+    for i, doc in enumerate(similar_docs):
+        print(f"Top-{i+1} document : {doc.page_content}")
+        print("\n\n")
 
     # 검색된 문서의 내용을 하나의 문자열로 결합
     context = " ".join([doc.page_content for doc in similar_docs])
