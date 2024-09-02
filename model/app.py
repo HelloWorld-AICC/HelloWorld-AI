@@ -5,7 +5,7 @@ import json
 import logging
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import PromptTemplate
-from langchain_elasticsearch import ElasticsearchStore
+# from langchain_elasticsearch import ElasticsearchStore
 from dotenv import load_dotenv
 
 load_dotenv(verbose=True)
