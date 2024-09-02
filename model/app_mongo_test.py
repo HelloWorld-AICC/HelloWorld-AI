@@ -5,7 +5,7 @@ import json
 import logging
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import PromptTemplate
-from langchain_elasticsearch import ElasticsearchStore
+#from langchain_elasticsearch import ElasticsearchStore
 from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
 from pymongo import MongoClient
 
@@ -110,6 +110,9 @@ def generate_ai_response(conversation_history,query,db):
 
     # 검색된 문서의 내용을 하나의 문자열로 결합
     context = " ".join([doc.page_content for doc in similar_docs])
+
+    logger.info(f"context: {context}")  # 연관 텍스트 로깅
+    logger.info(f"conversation_history: {conversation_history}")  # 과거 대화 기록 로깅
 
     # 템플릿 설정
     prompt_template = PromptTemplate.from_template(template_text)

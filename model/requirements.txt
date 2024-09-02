@@ -4,8 +4,10 @@ python-dotenv
 langchain-openai
 langchain-core
 langchain-mongodb
+langchain_elasticsearch
 elasticsearch
 torch
 python-dotenv
 transformers
 pymongo
+pymongo[srv]
