@@ -4,6 +4,9 @@ FROM python:3.9-slim
 # 작업 디렉토리 설정
 WORKDIR /app
 
+#CA 인증서 
+RUN apt-get update && apt-get install -y ca-certificates
+
 # 필요한 파일 복사
 COPY requirements.txt .
 COPY app.py .

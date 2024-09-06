@@ -17,13 +17,8 @@
     "path": {
         "data_file_name": "preprocessed.json",
         "db_name": "HelloWorld-AI",
-<<<<<<< HEAD
-        "collection_name": "foreigner_legalQA",
-        "index_name" : "vector_index"
-=======
         "index_name": "vector_index",
         "collection_name": "foreigner_legalQA"
->>>>>>> 8eb8823 (몽고DB, Azure이전)
     },
 
     "chat_inference" : {

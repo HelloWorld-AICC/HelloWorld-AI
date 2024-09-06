@@ -1,7 +1,7 @@
 {
     "seed": 42,
     "device" : "cuda:0",
-    "db" : "mongo",
+    "db" : "elasticsearch",
 
     "config": {
         "model_id" : "MLP-KTLim/llama-3-Korean-Bllossom-8B",
@@ -17,13 +17,7 @@
     "path": {
         "data_file_name": "preprocessed.json",
         "db_name": "HelloWorld-AI",
-<<<<<<< HEAD
-        "collection_name": "foreigner_legalQA",
-        "index_name" : "vector_index"
-=======
-        "index_name": "vector_index",
         "collection_name": "foreigner_legalQA"
->>>>>>> 8eb8823 (몽고DB, Azure이전)
     },
 
     "chat_inference" : {
@@ -35,16 +29,6 @@
         "top_p" : 0.95,
         "no_repeat_ngram_size" : 0,
         "repeat_penalty" : 1.4
-    },
-
-    "openai_chat_inference" : {
-        "model" : "gpt-3.5-turbo-0125",
-        "frequency_penalty" : 0.5,
-        "logprobs" : true,
-        "top_logprobs" : 10,
-        "max_tokens" : 1024,
-        "stop" : null,
-        "temperature" : 0.7
     },
 
     "summary_inference" : {

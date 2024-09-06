@@ -5,9 +5,10 @@ import json
 import logging
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import PromptTemplate
-#from langchain_elasticsearch import ElasticsearchStore
+from langchain_elasticsearch import ElasticsearchStore
 from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 
 from dotenv import load_dotenv
 
@@ -27,8 +28,10 @@ if config['db'] == 'elasticsearch':
     os.environ["ES_API_KEY"] = os.getenv("ES_API_KEY")
 
 elif config['db'] == 'mongo':
-   os.environ["MONGODB_ATLAS_CLUSTER_URI"] = os.getenv("MONGODB_ATLAS_CLUSTER_URI")
-
+    os.environ["MONGODB_ATLAS_CLUSTER_URI"] = os.getenv("MONGODB_ATLAS_CLUSTER_URI")
+    api_key = os.getenv('MONGODB_API_KEY') 
+    cluster_url = "helloworld-ai.fpdjl.mongodb.net"
+    uri = f"mongodb+srv://{api_key}@{cluster_url}/?authMechanism=MONGODB-AWS&authSource=$external"
 
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_KEY")
 
@@ -56,8 +59,9 @@ try:
             embedding=OpenAIEmbeddings()
         )
     elif config['db'] == 'mongo':
-        client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"])
-        
+        #client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"])
+        client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"], server_api=ServerApi('1'))
+
         MONGODB_COLLECTION = client[config['path']['db_name']][config['path']['collection_name']]
         db = MongoDBAtlasVectorSearch(
             collection = MONGODB_COLLECTION,
@@ -110,9 +114,6 @@ def generate_ai_response(conversation_history,query,db):
 
     # 검색된 문서의 내용을 하나의 문자열로 결합
     context = " ".join([doc.page_content for doc in similar_docs])
-
-    logger.info(f"context: {context}")  # 연관 텍스트 로깅
-    logger.info(f"conversation_history: {conversation_history}")  # 과거 대화 기록 로깅
 
     # 템플릿 설정
     prompt_template = PromptTemplate.from_template(template_text)
