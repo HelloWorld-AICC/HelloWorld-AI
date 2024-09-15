@@ -1,0 +1,14 @@
+langchain
+langchain-community
+sentence-transformers
+langchain_elasticsearch
+huggingface_hub
+python-dotenv
+openai
+langchain-openai
+pymongo
+flask
+flask_ngrok
+flask_cors
+ipykernel
+gradio
