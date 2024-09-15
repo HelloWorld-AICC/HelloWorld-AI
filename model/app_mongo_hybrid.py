@@ -4,14 +4,14 @@ import os
 import json
 import logging
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_community.llms import VLLMOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_elasticsearch import ElasticsearchStore
 from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
 from pymongo import MongoClient
-from pymongo.server_api import ServerApi
 
 from dotenv import load_dotenv
+
+import numpy as np
 
 load_dotenv(verbose=True)
 
@@ -29,10 +29,8 @@ if config['db'] == 'elasticsearch':
     os.environ["ES_API_KEY"] = os.getenv("ES_API_KEY")
 
 elif config['db'] == 'mongo':
-    os.environ["MONGODB_ATLAS_CLUSTER_URI"] = os.getenv("MONGODB_ATLAS_CLUSTER_URI")
-    api_key = os.getenv('MONGODB_API_KEY') 
-    cluster_url = "helloworld-ai.fpdjl.mongodb.net"
-    uri = f"mongodb+srv://{api_key}@{cluster_url}/?authMechanism=MONGODB-AWS&authSource=$external"
+   os.environ["MONGODB_ATLAS_CLUSTER_URI"] = os.getenv("MONGODB_ATLAS_CLUSTER_URI")
+
 
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_KEY")
 
@@ -60,10 +58,11 @@ try:
             embedding=OpenAIEmbeddings()
         )
     elif config['db'] == 'mongo':
-        #client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"])
-        client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"], server_api=ServerApi('1'))
-
+        client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"])
+        
         MONGODB_COLLECTION = client[config['path']['db_name']][config['path']['collection_name']]
+
+        
         db = MongoDBAtlasVectorSearch(
             collection = MONGODB_COLLECTION,
             embedding = OpenAIEmbeddings(model="text-embedding-3-large"),
@@ -83,6 +82,8 @@ def generate_ai_response(conversation_history,query,db):
     llm = ChatOpenAI(
         model=config['openai_chat_inference']['model'],
         frequency_penalty=config['openai_chat_inference']['frequency_penalty'],
+        logprobs=config['openai_chat_inference']['logprobs'],
+        top_logprobs=config['openai_chat_inference']['top_logprobs'],
         max_tokens=config['chat_inference']['max_new_tokens'],  # 최대 토큰수
         temperature=config['chat_inference']['temperature'],  # 창의성 (0.0 ~ 2.0)
     )
@@ -105,14 +106,41 @@ def generate_ai_response(conversation_history,query,db):
     대화 기록:
     {conversation_history}
     """
+    # Step 1: BM25 기반 텍스트 검색
+    bm25_results = MONGODB_COLLECTION.find({"$text": {"$search": query}})
+    """
+    https://python.langchain.com/v0.2/docs/integrations/retrievers/bm25/
+    """
+    documents = []
+    document_embeddings = []
+    
+    for doc in bm25_results:
+        documents.append(doc)
+        document_embeddings.append(doc['embedding'])  # 각 문서에 저장된 임베딩
 
-    similar_docs = db.similarity_search(query, k=3)
-    for i, doc in enumerate(similar_docs):
+    # Step 2: 쿼리에 대한 임베딩 생성
+    query_embedding = db.embedding.embed_query(query)
+
+    # Step 3: 임베딩 유사도 계산 (코사인 유사도)
+    def cosine_similarity(a, b):
+        return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+    similarities = [
+        (doc, cosine_similarity(query_embedding, doc_emb))
+        for doc, doc_emb in zip(documents, document_embeddings)
+    ]
+
+    # Step 4: 유사도 순으로 정렬
+    sorted_docs = sorted(similarities, key=lambda x: x[1], reverse=True)
+    # Step 5: 상위 k개 문서 선택 (k=3)
+    top_k_docs = sorted_docs[:3]
+
+    for i, doc in enumerate(top_k_docs):
         print(f"Top-{i+1} document : {doc.page_content}")
         print("\n\n")
 
     # 검색된 문서의 내용을 하나의 문자열로 결합
-    context = " ".join([doc.page_content for doc in similar_docs])
+    context = " ".join([doc.page_content for doc, _ in top_k_docs])
 
     # 템플릿 설정
     prompt_template = PromptTemplate.from_template(template_text)
