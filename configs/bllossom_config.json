@@ -1,0 +1,56 @@
+{
+    "seed": 42,
+    "device" : "cuda:0",
+    "db" : "mongo",
+
+    "config": {
+        "model_id" : "MLP-KTLim/llama-3-Korean-Bllossom-8B",
+        "quantized_path": "ywhwang/llama-3-Korean-Bllossom-8B-awq",
+        "chunk_size": 512,
+        "overlap_size": 100,
+        "top_k": 2,
+        "n_batch": 256,
+        "n_ctx": 2048,
+        "context_length" : 8196
+    },
+    
+    "path": {
+        "data_file_name": "preprocessed.json",
+        "db_name": "HelloWorld-AI",
+        "collection_name": "foreigner_legalQA",
+        "index_name" : "vector_index"
+    },
+
+    "chat_inference" : {
+        "max_tokens" : 1024,
+        "do_sample": "True",
+        "num_beams": 1,
+        "temperature": 0.8,
+        "top_k" : 50,
+        "top_p" : 0.95,
+        "no_repeat_ngram_size" : 0,
+        "repeat_penalty" : 1.4
+    },
+
+    "openai_chat_inference" : {
+        "model" : "gpt-3.5-turbo-0125",
+        "frequency_penalty" : 0.5,
+        "logprobs" : true,
+        "top_logprobs" : 10,
+        "max_tokens" : 1024,
+        "stop" : null,
+        "temperature" : 0.7
+    },
+
+    "summary_inference" : {
+        "max_length" : 2048,
+        "do_sample": "False",
+        "num_beams": 1,
+        "temperature": 1.0,
+        "top_k" : 50,
+        "top_p" : 1,
+        "no_repeat_ngram_size" : 0,
+        "repeat_penalty" : 1.2
+    }
+
+}
