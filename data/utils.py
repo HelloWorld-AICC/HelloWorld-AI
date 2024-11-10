@@ -18,7 +18,6 @@ class BatchClient:
 
         self.config = config
         self.embedding_columns = ["상담제목", "상담내용요약"]
-        self.generate_columns = ["추가정보", "해결방법"]
 
         load_dotenv(verbose=True)
         print('## config loaded ##')
@@ -117,22 +116,18 @@ class BatchClient:
         return metadata
 
 
-    # generate batch 처리
-    def make_generate(self, df: pd.DataFrame, column_name: str, batch_jsonl_path : str, meta_path : str,  prompt_path=None):
+    # generate batch 처리 - 내담자정보, 해결방안
+    def make_generate(self, df: pd.DataFrame, batch_jsonl_path : str, meta_path : str,  prompt_path=None):
         id_list = []
         metadata_list = []
 
-        if column_name in self.generate_columns:
-            # 프롬프트 불러오기
-            with open(prompt_path, 'r', encoding='utf-8') as file:
-                PROMPT = file.read()
-            
-            url = "/v1/chat/completions"
-            print('## Generate model loaded')
+        with open(prompt_path, 'r', encoding='utf-8') as file:
+            PROMPT = file.read()
         
-        else:
-            raise ValueError("## Wrong column name!")
-
+        PROMPT = ast.literal_eval(PROMPT)
+        url = "/v1/chat/completions"
+        print('## Generate model loaded')
+        
         ## df column rename
         df.rename(columns={"제목" : "상담제목", "상담내용" : "상담내용요약",
                    "진행 과정 및 결과" : "진행_과정_및_결과", "작성일" : "상담일시"
@@ -140,14 +135,18 @@ class BatchClient:
 
         with open(batch_jsonl_path, 'w', encoding='utf-8') as f:
             for idx, row in df.iterrows():
+                user_input = f"""<제목>{row['상담제목']}</제목>
+                <전체상담내용>{row['상담내용요약']}</전체상담내용>
+                <상담기록>\n{row['진행_과정_및_결과']}</상담기록>
+                """
                 json_line = json.dumps(
                                         {"custom_id" : f"request-{idx}",
                                         "method" : "POST",
                                         "url" : url,
                                         "body" : {"model": self.config['generate_model'],
                                                     "messages": [
-                                                            {"role": "system", "content": PROMPT},
-                                                            {"role": "user", "content": row[column_name]}
+                                                            {"role": "system", "content": PROMPT["system_prompt"]},
+                                                            {"role": "user", "content": PROMPT["user_prompt"] + "\n" + user_input + "\n\n[output]\n"}
                                                         ]
                                                     },
                                                     "max_tokens" : self.config['max_tokens']
@@ -164,7 +163,7 @@ class BatchClient:
                         "Embedding": []
                     },
                     "상담내용요약": {
-                        "raw_text": row["상담내용"],
+                        "raw_text": row["상담내용요약"],
                         "Embedding": []
                     },
                     "진행_과정_및_결과": row["진행_과정_및_결과"],
@@ -190,25 +189,25 @@ class BatchClient:
         print(f"## jsonl file saved in {batch_jsonl_path}")
         print(f"## meta file saved in {meta_path}")
 
-        # batch_input_file = self.client.files.create(
-        #     file=open(batch_jsonl_path, "rb"),
-        #     purpose="batch"
-        # )
+        batch_input_file = self.client.files.create(
+            file=open(batch_jsonl_path, "rb"),
+            purpose="batch"
+        )
 
 
-        # batch_input_file_id = batch_input_file.id
+        batch_input_file_id = batch_input_file.id
 
-        # metadata = self.client.batches.create(
-        #     input_file_id=batch_input_file_id,
-        #     endpoint=url,
-        #     completion_window="24h",
-        #     metadata={
-        #     "description": "make generation"
-        #     }
-        # )
+        metadata = self.client.batches.create(
+            input_file_id=batch_input_file_id,
+            endpoint=url,
+            completion_window="24h",
+            metadata={
+            "description": "make generation"
+            }
+        )
 
-        # return metadata
-        return
+        return metadata
+        # return
 
 
     # triplet extractor 배치 취소
@@ -255,28 +254,32 @@ class BatchClient:
                 json_obj = json.loads(line)
                 data.append(json_obj)
 
-        print(f"## {len(data)} 개의 데이터 로드됨. 데이터 예시 : {data[0]}")
+        # print(f"## {len(data)} 개의 데이터 로드됨. 데이터 예시 : {data[0]}")
 
         # metadata csv
         metadata_csv = pd.read_csv(meta_path)
         
 
-    
         ## generate 경우
-        if return_type == "generate" and column_name in self.generate_columns:
+        if return_type == "generate":
             for idx, request in enumerate(data):
                 answer = request["response"]["body"]["choices"][0]["message"]["content"]
+
+                # answer 후처리
+                try:
+                    info, solution = answer.split("</내담자정보>")
+                except:
+                    print("## answer : {answer} format is not aligned")
+
+                info = re.sub(r"<\/?\w+>", "", info)
+                solution = re.sub(r"<\/?\w+>", "", solution)
 
                 # 동일한 request_id 가진 metadata 불러와서 매칭하기
                 metadata = metadata_csv.loc[metadata_csv["request_id"] == request["custom_id"], "metadata"]
                 metadata = ast.literal_eval(metadata.values[0])
                 
-                if column_name == "추가정보":
-                    data[idx]["내담자_정보"]["추가정보"] = answer
-                elif column_name == "해결방법":
-                    data[idx][column_name] = answer
-                else:
-                    raise ValueError("## Wrong column name : ", column_name)
+                data[idx]["내담자_정보"]["추가정보"] = info
+                data[idx]["해결방법"] = solution
                 
                 json_line = json.dumps({})
                 f.write(json_line + '\n')
@@ -284,11 +287,15 @@ class BatchClient:
         
         elif return_type == "embedding" and column_name in self.embedding_columns:
             for idx, request in enumerate(data):
-                embedding = data['response']['body']['data'][0]['embedding']
+                # print(request)
+                # print(type(request['response']['body']['data'][0]['index']))
+                embedding = request['response']['body']['data'][0]['embedding']
+                # print('## embedding : ',embedding)
             
                 # 동일한 request_id 가진 metadata 불러와서 매칭하기
                 metadata = metadata_csv.loc[metadata_csv["request_id"] == request["custom_id"], "metadata"]
-                metadata = ast.literal_eval(metadata.values[0])
+                print(type(metadata[0]), metadata[0])
+                metadata = ast.literal_eval(metadata[0]) # datetime 자료형때문에 오류 발생
 
                 try:
                     data[idx][column_name]["Embedding"] = embedding

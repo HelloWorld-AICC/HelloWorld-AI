@@ -3,6 +3,7 @@
     "device" : "cuda:0",
     "embedding_model" : "text-embedding-3-large",
     "generate_model" : "gpt-4o",
+    "max_tokens" : 1024,
 
     "config": {
         "model_id" : "MLP-KTLim/llama-3-Korean-Bllossom-8B",
