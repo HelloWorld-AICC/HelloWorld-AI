@@ -1,0 +1,44 @@
+{
+  "info": {
+    "id": 41010991,
+    "dataType": "판결문",
+    "caseNm": "손해배상(기)",
+    "caseTitle": "대법원 2021. 6. 10. 선고 2021다205490 판결",
+    "courtType": "판례(대법원)",
+    "courtNm": "대법원",
+    "judmnAdjuDe": "2021-06-10",
+    "caseNoID": "2021다205490",
+    "caseNo": "2021다205490"
+  },
+  "jdgmn": "",
+  "jdgmnInfo": [
+    {
+      "question": "낙찰금액이 가상 경쟁가격으로 하락하면 그에 따라 관급자재 등 분리발주 대상금액도 감소하는가?",
+      "answer": "부정"
+    }
+  ],
+  "Summary": [
+    {
+      "summ_contxt": "그 판시와 같은 이유를 들어 낙찰금액이 가상 경쟁가격으로 하락하면 그에 따라 관급자재 등 분리발주 대상금액도 감소한다는 피고의 주장을 배척하였다.",
+      "summ_pass": "낙찰금액이 가상 경쟁가격으로 하락하면 관급자재 등 분리발주 대상금액도 감소한다는 피고의 주장을 배척하였다."
+    }
+  ],
+  "keyword_tagg": [
+    {
+      "id": 1,
+      "keyword": "피고"
+    },
+    {
+      "id": 2,
+      "keyword": "주장"
+    }
+  ],
+  "Reference_info": {
+    "reference_rules": "손해배상",
+    "reference_court_case": ""
+  },
+  "Class_info": {
+    "class_name": "근로자",
+    "instance_name": "손해배상"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "info": {
+    "id": 43009041,
+    "dataType": "판결문",
+    "caseNm": "산업재해보상보험료등부과처분취소",
+    "caseTitle": "서울행정법원 2004. 11. 18. 선고 2003구합36642 판결 : 항소",
+    "courtType": "판례(하급심)",
+    "courtNm": "서울행정법원",
+    "judmnAdjuDe": "2004-11-18",
+    "caseNoID": "2003구합36642",
+    "caseNo": "2003구합36642"
+  },
+  "jdgmn": "사립대학교의 시간강사가 근로기준법상의 근로자에 해당한다고 한 사례",
+  "jdgmnInfo": [
+    {
+      "question": "사립대학교의 시간강사가 근로기준법상의 근로자에 해당하는지?",
+      "answer": "긍정"
+    }
+  ],
+  "Summary": [
+    {
+      "summ_contxt": "사립대학교의 시간강사는 종속적 지위에서 사립대학교 내지 학교법인에 근로를 제공하므로 근로기준법 소정의 근로자에 해당한다.",
+      "summ_pass": "사립대학교의 시간강사는 근로기준법상의 근로자에 해당한다."
+    }
+  ],
+  "keyword_tagg": [
+    {
+      "id": 1,
+      "keyword": "사립대학교"
+    },
+    {
+      "id": 2,
+      "keyword": "시간강사"
+    },
+    {
+      "id": 3,
+      "keyword": "종속적 지위"
+    },
+    {
+      "id": 4,
+      "keyword": "근로자"
+    }
+  ],
+  "Reference_info": {
+    "reference_rules": "근로기준법 제14조, 제18조",
+    "reference_court_case": ""
+  },
+  "Class_info": {
+    "class_name": "근로자",
+    "instance_name": "근로기준법"
+  }
+}
