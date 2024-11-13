@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Hello World
 안녕하세요! 저희는 외국인 노동자를 위한 지원센터 AICC 어플을 개발하는 "끝까지 간다" 팀입니다😄
 
@@ -51,3 +52,12 @@ LG U+나 쿠쿠와 같은 대기업의 사례를 보면 AICC의 도입으로 재
 
 
 
+=======
+# HelloWorld_AI_Personal
+HelloWorld 개발 레포지토리(개인)
+
+
+1. HelloWorld organaization에서 클론
+2. HelloWorld_AI_Personal 레포에서 개발
+3. 완료 후 HelloWorld organaization-develop에 푸시
+>>>>>>> 5af2708556ed220541b47226bedeee8d1dbf3524
