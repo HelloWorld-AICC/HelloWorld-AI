@@ -1,3 +1,5 @@
 model/.env
 venv
 new_env
+myenv
+.env
