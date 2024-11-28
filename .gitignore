@@ -3,3 +3,4 @@ venv
 new_env
 myenv
 .env
+Azure/local.settings.json
