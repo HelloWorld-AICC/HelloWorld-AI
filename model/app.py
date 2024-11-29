@@ -5,15 +5,10 @@ import json
 import logging
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import PromptTemplate
-# from langchain_elasticsearch import ElasticsearchStore
 from dotenv import load_dotenv
 
 load_dotenv(verbose=True)
-ES_CLOUD_ID = os.getenv("ES_CLOUD_ID")
-ES_USER = os.getenv("ES_USER")
-ES_PASSWORD = os.getenv("ES_PASSWORD")
-ES_API_KEY = os.getenv("ES_API_KEY")
-OPENAI_KEY = os.getenv("OPENAI_KEY")
+logging.info("Starting application initialization...")
 
 CONFIG_NAME = "config.json"
 print("## config_name : ", CONFIG_NAME)
@@ -82,23 +77,26 @@ prompt_resume = """
     Knowledge of sales processes and CRM software
     Ability to work well in a team setting
     Previous experience in a sales or customer-facing role
-    Bachelor& #39;s degree in Business Administration or related field
+    Bachelor degree in Business Administration or related field
     지원지침: {Instructions}
-    추가정보:Welcome to DeepSales, a leader in sales intelligence and data innovation, established in 2021 in Seoul& #39;s Gangnam-gu district. DeepSales empowers sales managers and businesses globally with advanced platform leveraging deep learning technologies for actionable insights. Our goal is to maximize sales potential through intelligent data-driven insights and efficiency in sales processes.
+    추가정보:Welcome to DeepSales, a leader in sales intelligence and data innovation, established in 2021 in Seoul Gangnam-gu district. DeepSales empowers sales managers and businesses globally with advanced platform leveraging deep learning technologies for actionable insights. Our goal is to maximize sales potential through intelligent data-driven insights and efficiency in sales processes.
 """
 
 
+# 챗봇 응답
+# prompt, query, db는 반드시 존재해야 하므로 기본 값 없앰
+def generate_ai_response(prompt, query, db, conversation_history = "") -> str:
+    if conversation_history == "":
+        print("No dialog history founded.")
 
+    # agent
+    llm = ChatOpenAI(model=config['chat_config']['model'],
+                    # temperature=0,  # 창의성 (0.0 ~ 2.0)
+                    max_tokens=config['chat_config']['max_tokens'],  # 최대 토큰수
+                    openai_api_key=OPENAI_KEY)
 
-#GPT 연동
-def generate_ai_response(conversation_history = None,prompt = None,query = None,db = None):
-
-    llm = ChatOpenAI(model="gpt-3.5-turbo-0125",
-                        temperature=0,  # 창의성 (0.0 ~ 2.0)
-                        max_tokens=4096,  # 최대 토큰수
-                        openai_api_key=OPENAI_KEY)
-
-    similar_docs = db.similarity_search(query, k=3)
+    ## 어떻게 similarity search 할 것인지?
+    similar_docs = db.similarity_search(query, k=config['chat_config']['top_k'])
 
     # 검색된 문서의 내용을 하나의 문자열로 결합
     context = " ".join([doc.page_content for doc in similar_docs])
@@ -107,19 +105,20 @@ def generate_ai_response(conversation_history = None,prompt = None,query = None,
     prompt_template = PromptTemplate.from_template(prompt)
 
     # 템플릿에 값을 채워서 프롬프트를 완성
-    filled_prompt = prompt_template.format(context = context, conversation_history= conversation_history)
+    filled_prompt = prompt_template.format(context = context, conversation_history = conversation_history)
     
     output = llm.invoke(input = filled_prompt)
     
     return output.content
 
-#GPT 연동
-def generate_ai_resume(prompt = None,query = None,db = None):
 
-    llm = ChatOpenAI(model="gpt-3.5-turbo-0125",
-                        temperature=0,  # 창의성 (0.0 ~ 2.0)
-                        max_tokens=4096,  # 최대 토큰수
-                        openai_api_key=OPENAI_KEY)
+# 이력서 생성
+# GPT 연동
+def generate_ai_resume(prompt, db):
+    llm = ChatOpenAI(model=config['resume_config']['model'],
+                    temperature=config['resume_config']['temperature'],  # 창의성 (0.0 ~ 2.0)
+                    max_tokens=config['resume_config']['max_tokens'],  # 최대 토큰수
+                    openai_api_key=OPENAI_KEY)
 
     # similar_docs = db.similarity_search(query, k=3)
 
@@ -136,6 +135,7 @@ def generate_ai_resume(prompt = None,query = None,db = None):
     
     return output.content
 
+# for test
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
@@ -177,8 +177,6 @@ def question():
         logger.error(f"Error processing question: {str(e)}")
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
     
-
-
 
 @app.route('/resume', methods=['POST'])
 def resume():
