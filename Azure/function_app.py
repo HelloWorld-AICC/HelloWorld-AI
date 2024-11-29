@@ -34,16 +34,8 @@ try:
     logging.info("Starting database initialization...")
     client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"], ssl=True)
     
-    # 기존 LegalQA 컬렉션
+    # 두 컬렉션 모두 pymongo Collection 객체로 초기화
     MONGODB_COLLECTION = client[config['path']['db_name']]['foreigner_legalQA']
-    db = MongoDBAtlasVectorSearch(
-        collection=MONGODB_COLLECTION,
-        embedding=OpenAIEmbeddings(model="text-embedding-3-large"),
-        index_name=config['path']['index_name'],
-        relevance_score_fn="cosine"
-    )
-    
-    # Legal_test 컬렉션 추가(첫 질문용)
     TEST_COLLECTION = client[config['path']['db_name']]['foreigner_legal_test']
     
     logging.info("Database initialized successfully.")
@@ -51,19 +43,67 @@ except Exception as e:
     logging.error(f"Error loading database: {str(e)}")
 
 # 응답 생성 함수
-def generate_ai_response(conversation_history, query, db):
+def generate_ai_response(conversation_history, query, collection):
     try:
-        # 최근 N개의 대화만 사용 (예: 최근 3개)
-        recent_conversation = conversation_history[-6:]  # 사용자 3개 + AI 3개 응답
-        
-        # 현재 질문에 대한 유사 문서 검색
-        similar_docs = db.similarity_search(query, k=3)  # 유사 문서 수를 줄임
-        
-        context = ""
-        for doc in similar_docs:
-            context += doc.page_content + "\n"
+        logging.info(f"Generating embedding for query: {query}")
+        embedding_model = OpenAIEmbeddings(model="text-embedding-3-large")
+        query_embedding = embedding_model.embed_query(query)
 
-        # 프롬프트 템플릿 수정
+        # legal_QA 컬렉션용 Vector Search 쿼리
+        results = collection.aggregate([
+            {
+                "$vectorSearch": {
+                    "index": "vector_index",
+                    "path": "embedding",
+                    "queryVector": query_embedding,
+                    "numCandidates": 100,
+                    "limit": 3
+                }
+            },
+            {
+                "$project": {
+                    "text": 1,           # text 필드만 프로젝션
+                    "source": 1,         # 출처 정보도 포함
+                    "score": { "$meta": "vectorSearchScore" },
+                    "_id": 0
+                }
+            }
+        ])
+
+        results_list = list(results)
+        logging.info("\n=== 유사 문서 검색 결과 ===")
+        
+        if not results_list:
+            logging.info("유사한 문서를 찾을 수 없습니다.")
+            context = "일반적인 안내 정보..."
+        else:
+            context = ""
+            for idx, result in enumerate(results_list, 1):
+                # 유사 문서 로깅
+                logging.info(f"\n[유사 문서 {idx}]")
+                logging.info(f"유사도 점수: {result.get('score', 'N/A')}")
+                logging.info(f"출처: {result.get('source', 'N/A')}")
+                logging.info(f"내용: {result.get('text', 'N/A')[:200]}...")  # 앞부분만 로깅
+
+                # 컨텍스트에 추가
+                context += f"""
+관련 사례 {idx} (출처: {result.get('source', 'N/A')}):
+{result.get('text', '')}
+
+"""
+
+        # 대화 기록 포맷팅 (가장 최근 대화 3쌍 = 6개 메시지)
+        formatted_conversation = "\n".join([
+            f"{'사용자' if msg['speaker'] == 'human' else 'AI'}: {msg['utterance']}"
+            for msg in conversation_history[-6:]  # 현재 질문 포함
+        ])
+
+        # AI 응답 생성
+        llm = ChatOpenAI(
+            model=config['openai_chat_inference']['model'],
+            temperature=0.3
+        )
+
         template_text = """
 당신은 한국의 외국인 근로자를 위한 법률 및 비자 전문 AI 어시스턴트입니다.
 
@@ -73,29 +113,16 @@ def generate_ai_response(conversation_history, query, db):
 최근 대화 기록:
 {conversation_history}
 
-현재 질문: {query}
-
 답변 시 주의사항:
-1. 현재 질문에 직접적으로 관련된 답변만 제공하세요
+1. 구체적이고 실용적인 해결방안을 제시해주세요
 2. 이전 답변을 반복하지 마세요
+3. 친절하고 이해하기 쉬운 말로 설명해주세요
 """
-
-        # 대화 기록 포맷팅
-        formatted_conversation = "\n".join([
-            f"{'사용자' if msg['speaker'] == 'human' else 'AI'}: {msg['utterance']}"
-            for msg in recent_conversation[:-1]  # 현재 질문 제외
-        ])
 
         prompt_template = PromptTemplate.from_template(template_text)
         filled_prompt = prompt_template.format(
             context=context,
-            conversation_history=formatted_conversation,
-            query=query
-        )
-        
-        llm = ChatOpenAI(
-            model=config['openai_chat_inference']['model'],
-            temperature=0.3  # 더 일관된 응답을 위해 temperature 낮춤
+            conversation_history=formatted_conversation
         )
         
         output = llm.invoke(input=filled_prompt)
@@ -228,7 +255,7 @@ def question(req: func.HttpRequest) -> func.HttpResponse:
         if is_first_query:
             response = generate_ai_response_first_query(user_query, TEST_COLLECTION)
         else:
-            response = generate_ai_response(conversation, user_query, db)
+            response = generate_ai_response(conversation, user_query, MONGODB_COLLECTION)
 
         # 응답에서 references 제외하고 answer만 반환
         return func.HttpResponse(
@@ -246,3 +273,4 @@ def question(req: func.HttpRequest) -> func.HttpResponse:
 def get_echo_call(req: func.HttpRequest) -> func.HttpResponse:
     param = req.route_params.get('param')
     return func.HttpResponse(json.dumps({"param": param}), mimetype="application/json")
+
