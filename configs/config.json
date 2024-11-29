@@ -7,7 +7,7 @@
         "model" : "gpt-4o",
         "max_tokens" : 1024,
         "top_k" : 3,
-        "prev_turns" : 5
+        "prev_turns" : 6
     },
 
     "resume_config" : {
