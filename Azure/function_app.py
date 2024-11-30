@@ -42,6 +42,37 @@ try:
 except Exception as e:
     logging.error(f"Error loading database: {str(e)}")
 
+# 상단에 프롬프트 템플릿 정의
+CHAT_PROMPT_TEMPLATE = PromptTemplate.from_template("""
+당신은 한국의 외국인 근로자를 위한 법률 및 비자 전문 AI 어시스턴트입니다.
+
+참고 문서:
+{context}
+
+최근 대화 기록:
+{conversation_history}
+
+답변 시 주의사항:
+1. 구체적이고 실용적인 해결방안을 제시해주세요
+2. 이전 답변을 반복하지 마세요
+3. 친절하고 이해하기 쉬운 말로 설명해주세요
+""")
+
+FIRST_QUERY_PROMPT_TEMPLATE = PromptTemplate.from_template("""
+당신은 한국의 외국인 근로자를 위한 법률 및 비자 전문 AI 어시스턴트입니다.
+다음은 유사한 사례들입니다:
+
+{context}
+
+이 사례들을 참고하여 다음 질문에 답변해주세요:
+질문: {query}
+
+답변 시 주의사항:
+1. 구체적이고 실용적인 해결방안을 제시해주세요
+2. 필요한 경우 관련 기관이나 절차를 안내해주세요
+3. 친절하고 이해하기 쉬운 말로 설명해주세요
+""")
+
 # 응답 생성 함수
 def generate_ai_response(conversation_history, query, collection):
     try:
@@ -92,37 +123,24 @@ def generate_ai_response(conversation_history, query, collection):
 
 """
 
-        # 대화 기록 포맷팅 (가장 최근 대화 3쌍 = 6개 메시지)
+        # config에서 대화 쌍 수 가져와서 사용
+        max_pairs = config['chat_inference']['max_conversation_pairs']
+        max_messages = max_pairs * 2
+        
         formatted_conversation = "\n".join([
             f"{'사용자' if msg['speaker'] == 'human' else 'AI'}: {msg['utterance']}"
-            for msg in conversation_history[-6:]  # 현재 질문 포함
+            for msg in conversation_history[-max_messages:]
         ])
 
-        # AI 응답 생성
-        llm = ChatOpenAI(
-            model=config['openai_chat_inference']['model'],
-            temperature=0.3
-        )
-
-        template_text = """
-당신은 한국의 외국인 근로자를 위한 법률 및 비자 전문 AI 어시스턴트입니다.
-
-참고 문서:
-{context}
-
-최근 대화 기록:
-{conversation_history}
-
-답변 시 주의사항:
-1. 구체적이고 실용적인 해결방안을 제시해주세요
-2. 이전 답변을 반복하지 마세요
-3. 친절하고 이해하기 쉬운 말로 설명해주세요
-"""
-
-        prompt_template = PromptTemplate.from_template(template_text)
-        filled_prompt = prompt_template.format(
+        # 전역 프롬프트 템플릿 사용
+        filled_prompt = CHAT_PROMPT_TEMPLATE.format(
             context=context,
             conversation_history=formatted_conversation
+        )
+        
+        llm = ChatOpenAI(
+            model=config['openai_chat_inference']['model'],
+            temperature=config['chat_inference']['temperature']
         )
         
         output = llm.invoke(input=filled_prompt)
@@ -192,31 +210,15 @@ def generate_ai_response_first_query(query, collection):
 
 """
 
-        # AI 응답 생성
-        llm = ChatOpenAI(
-            model=config['openai_chat_inference']['model'],
-            temperature=config['chat_inference']['temperature'],
-        )
-
-        template_text = """
-당신은 한국의 외국인 근로자를 위한 법률 및 비자 전문 AI 어시스턴트입니다.
-다음은 유사한 사례들입니다:
-
-{context}
-
-이 사례들을 참고하여 다음 질문에 답변해주세요:
-질문: {query}
-
-답변 시 주의사항:
-1. 구체적이고 실용적인 해결방안을 제시해주세요
-2. 필요한 경우 관련 기관이나 절차를 안내해주세요
-3. 친절하고 이해하기 쉬운 말로 설명해주세요
-"""
-
-        prompt_template = PromptTemplate.from_template(template_text)
-        filled_prompt = prompt_template.format(
+        # 전역 프롬프트 템플릿 사용
+        filled_prompt = FIRST_QUERY_PROMPT_TEMPLATE.format(
             context=context,
             query=query
+        )
+        
+        llm = ChatOpenAI(
+            model=config['openai_chat_inference']['model'],
+            temperature=config['chat_inference']['temperature']
         )
         
         output = llm.invoke(input=filled_prompt)
