@@ -21,13 +21,12 @@ with open(f'configs/config.json', 'r') as f:
 with open(f'model/templates/chat_template.txt', 'r', encoding='utf-8') as file:
     chat_template = file.read()
 
-# with open(f'model/templates/resume_template.txt', 'r', encoding='utf-8') as file:
-#     resume_template = file.read()
+with open(f'model/templates/resume_template.txt', 'r', encoding='utf-8') as file:
+    resume_template = file.read()
 
 
 # MongoDB 클러스터 URI 설정
 os.environ["MONGODB_ATLAS_CLUSTER_URI"] = os.getenv("MONGODB_ATLAS_CLUSTER_URI")
-logging.info(f'## db : {config["db"]}')
 logging.info(f'## db_name : {config["path"]["db_name"]}')
 
 # OpenAI API 키 설정
@@ -58,7 +57,7 @@ def generate_ai_response(conversation_history, query, collection):
         embedding_model = OpenAIEmbeddings(model=config['embedding_model'])
         query_embedding = embedding_model.embed_query(query)
 
-        # legal_QA 컬렉션용 Vector Search 쿼리
+        # legal_QA 컬렉션용 Vector Search 쿼리 -- 여기 부분 필요에 따라 수정
         results = collection.aggregate([
             {
                 "$vectorSearch": {
