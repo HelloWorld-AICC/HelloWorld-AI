@@ -1,45 +1,26 @@
 {
     "seed": 42,
     "device" : "cuda:0",
-    "db" : "elasticsearch",
+    "embedding_model" : "text-embedding-3-large",
 
-    "config": {
-        "model_id" : "MLP-KTLim/llama-3-Korean-Bllossom-8B",
-        "quantized_path": "bllossom/llama-3-Korean-Bllossom-8B-Q5_K_M.gguf",
-        "chunk_size": 500,
-        "overlap_size": 100,
-        "top_k": 3,
-        "n_batch": 256,
-        "n_ctx": 2048,
-        "prev_turns" : 5
+    "chat_config" : {
+        "model" : "gpt-4o",
+        "max_tokens" : 1024,
+        "top_k" : 3,
+        "prev_turns" : 6
+    },
+
+    "resume_config" : {
+        "model" : "gpt-4o",
+        "max_tokens" : 4096,
+        "temperature" : 0
     },
     
     "path": {
-        "data_file_name": "preprocessed.json",
+        "data_file_name": "./data/batch_jsonl/output/consultation_documents_2023_batch.jsonl",
         "db_name": "HelloWorld-AI",
-        "collection_name": "foreigner_legalQA"
-    },
-
-    "chat_inference" : {
-        "max_new_tokens" : 512,
-        "do_sample": "True",
-        "num_beams": 1,
-        "temperature": 1.0,
-        "top_k" : 50,
-        "top_p" : 0.95,
-        "no_repeat_ngram_size" : 0,
-        "repeat_penalty" : 1.4
-    },
-
-    "summary_inference" : {
-        "max_length" : 2048,
-        "do_sample": "False",
-        "num_beams": 1,
-        "temperature": 1.0,
-        "top_k" : 50,
-        "top_p" : 1,
-        "no_repeat_ngram_size" : 0,
-        "repeat_penalty" : 1.2
+        "collection_name": "foreigner_legal_test",
+        "index_name" : "vector_index"
     }
 
 }
