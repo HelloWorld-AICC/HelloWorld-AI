@@ -1,0 +1,27 @@
+{
+    "seed": 42,
+    "device" : "cuda:0",
+    "embedding_model" : "text-embedding-3-large",
+    
+    "chat_config" : {
+        "model" : "gpt-4o",
+        "max_tokens" : 1024,
+        "numCandidates" : 100,
+        "top_k" : 3,
+        "prev_turns" : 6
+    },
+
+    "resume_config" : {
+        "model" : "gpt-4o",
+        "max_tokens" : 4096,
+        "temperature" : 0
+    },
+    
+    "path": {
+        "data_file_name": "./data/batch_jsonl/output/consultation_documents_2023_batch.jsonl",
+        "db_name": "HelloWorld-AI",
+        "collection_name": "foreigner_legalQA",
+        "test_collection_name": "foreigner_legal_test",
+        "index_name" : "vector_index"
+    }
+}

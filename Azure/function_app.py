@@ -13,71 +13,41 @@ app = func.FunctionApp()
 load_dotenv(verbose=True)
 logging.info("Starting application initialization...")
 
-# Config 파일 로드
-CONFIG_NAME = "mongo_config.json"
-logging.info(f"## config_name : {CONFIG_NAME}")
-
-with open(f'configs/{CONFIG_NAME}', 'r') as f:
+with open(f'configs/config.json', 'r') as f:
     config = json.load(f)
 
-# MongoDB 클러스터 URI 설정
-os.environ["MONGODB_ATLAS_CLUSTER_URI"] = os.getenv("MONGODB_ATLAS_CLUSTER_URI")
-logging.info(f'## db : {config["db"]}')
-logging.info(f'## db_name : {config["path"]["db_name"]}')
+logging.info(f"Config file loaded")
 
-# OpenAI API 키 설정
+os.environ["MONGODB_ATLAS_CLUSTER_URI"] = os.getenv("MONGODB_ATLAS_CLUSTER_URI")
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_KEY")
 
 # Load DB once at startup
-db = None
 try:
     logging.info("Starting database initialization...")
     client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"], ssl=True)
     
     # 두 컬렉션 모두 pymongo Collection 객체로 초기화
-    MONGODB_COLLECTION = client[config['path']['db_name']]['foreigner_legalQA']
-    TEST_COLLECTION = client[config['path']['db_name']]['foreigner_legal_test']
+    MONGODB_COLLECTION = client[config['path']['db_name']][config['path']['collection_name']]
+    TEST_COLLECTION = client[config['path']['db_name']][config['path']['test_collection_name']]
     
     logging.info("Database initialized successfully.")
+
 except Exception as e:
     logging.error(f"Error loading database: {str(e)}")
 
-# 상단에 프롬프트 템플릿 정의
-CHAT_PROMPT_TEMPLATE = PromptTemplate.from_template("""
-당신은 한국의 외국인 근로자를 위한 법률 및 비자 전문 AI 어시스턴트입니다.
+# prompt 불러오기
+with open(f'model/templates/chat_template.txt', 'r', encoding='utf-8') as file:
+    chat_template = file.read()
 
-참고 문서:
-{context}
+with open(f'model/templates/resume_template.txt', 'r', encoding='utf-8') as file:
+    resume_template = file.read()
 
-최근 대화 기록:
-{conversation_history}
-
-답변 시 주의사항:
-1. 구체적이고 실용적인 해결방안을 제시해주세요
-2. 이전 답변을 반복하지 마세요
-3. 친절하고 이해하기 쉬운 말로 설명해주세요
-""")
-
-FIRST_QUERY_PROMPT_TEMPLATE = PromptTemplate.from_template("""
-당신은 한국의 외국인 근로자를 위한 법률 및 비자 전문 AI 어시스턴트입니다.
-다음은 유사한 사례들입니다:
-
-{context}
-
-이 사례들을 참고하여 다음 질문에 답변해주세요:
-질문: {query}
-
-답변 시 주의사항:
-1. 구체적이고 실용적인 해결방안을 제시해주세요
-2. 필요한 경우 관련 기관이나 절차를 안내해주세요
-3. 친절하고 이해하기 쉬운 말로 설명해주세요
-""")
 
 # 응답 생성 함수
 def generate_ai_response(conversation_history, query, collection):
     try:
         logging.info(f"Generating embedding for query: {query}")
-        embedding_model = OpenAIEmbeddings(model="text-embedding-3-large")
+        embedding_model = OpenAIEmbeddings(model=config['embedding_model'])
         query_embedding = embedding_model.embed_query(query)
 
         # legal_QA 컬렉션용 Vector Search 쿼리
@@ -87,8 +57,8 @@ def generate_ai_response(conversation_history, query, collection):
                     "index": "vector_index",
                     "path": "embedding",
                     "queryVector": query_embedding,
-                    "numCandidates": 100,
-                    "limit": 3
+                    "numCandidates": config['chat_config']['numCandidates'],
+                    "limit": config['chat_config']['top_k']
                 }
             },
             {
@@ -124,8 +94,7 @@ def generate_ai_response(conversation_history, query, collection):
 """
 
         # config에서 대화 쌍 수 가져와서 사용
-        max_pairs = config['chat_inference']['max_conversation_pairs']
-        max_messages = max_pairs * 2
+        max_messages = config['chat_inference']['prev_turns']
         
         formatted_conversation = "\n".join([
             f"{'사용자' if msg['speaker'] == 'human' else 'AI'}: {msg['utterance']}"
@@ -139,8 +108,8 @@ def generate_ai_response(conversation_history, query, collection):
         )
         
         llm = ChatOpenAI(
-            model=config['openai_chat_inference']['model'],
-            temperature=config['chat_inference']['temperature']
+            model=config['chat_config']['model'],
+            # temperature=config['chat_inference']['temperature']
         )
         
         output = llm.invoke(input=filled_prompt)
@@ -156,7 +125,7 @@ def generate_ai_response(conversation_history, query, collection):
 def generate_ai_response_first_query(query, collection):
     try:
         logging.info(f"Generating embedding for query: {query}")
-        embedding_model = OpenAIEmbeddings(model="text-embedding-3-large")
+        embedding_model = OpenAIEmbeddings(model=config['embedding_model'])
         query_embedding = embedding_model.embed_query(query)
 
         # MongoDB Vector Search 쿼리
@@ -167,7 +136,7 @@ def generate_ai_response_first_query(query, collection):
                     "path": "내담자_정보.Embedding",
                     "queryVector": query_embedding,
                     "exact": True,
-                    "limit": 3
+                    "limit": config['chat_config']['top_k']
                 }
             },
             {
@@ -275,4 +244,3 @@ def question(req: func.HttpRequest) -> func.HttpResponse:
 def get_echo_call(req: func.HttpRequest) -> func.HttpResponse:
     param = req.route_params.get('param')
     return func.HttpResponse(json.dumps({"param": param}), mimetype="application/json")
-
