@@ -38,7 +38,7 @@ class ChatModel:
                         "path": "embedding",
                         "queryVector": query_embedding,
                         "numCandidates": self.config['chat_config']['numCandidates'],
-                        "limit": config['chat_config']['top_k']
+                        "limit": self.config['chat_config']['top_k']
                     }
                 },
                 {
@@ -61,10 +61,10 @@ class ChatModel:
                 context = ""
                 for idx, result in enumerate(results_list, 1):
                     # 유사 문서 로깅
-                    logging.info(f"\n[유사 문서 {idx}]")
+                    logging.info(f"[유사 문서 {idx}]")
                     logging.info(f"유사도 점수: {result.get('score', 'N/A')}")
                     logging.info(f"출처: {result.get('source', 'N/A')}")
-                    logging.info(f"내용: {result.get('text', 'N/A')[:200]}...")  # 앞부분만 로깅
+                    logging.info(f"내용: {result.get('text', 'N/A')}")  # 앞부분만 로깅
 
                     # 컨텍스트에 추가
                     context += f"""
@@ -128,7 +128,7 @@ class ChatModel:
 
             # 결과 처리 및 컨텍스트 구성
             results_list = list(results)
-            logging.info("\n=== 유사 문서 검색 결과 ===")
+            logging.info("=== 유사 문서 검색 결과 ===")
             
             if not results_list:
                 logging.info("유사한 문서를 찾을 수 없습니다.")
@@ -136,14 +136,14 @@ class ChatModel:
             context = ""
             for idx, result in enumerate(results_list, 1):
                 # 유사 문서 로깅
-                logging.info(f"\n[유사 문서 {idx}]")
+                logging.info(f"[유사 문서 {idx}]")
                 logging.info(f"유사도 점수: {result.get('score', 'N/A')}")
                 info = result['내담자_정보']
                 logging.info(f"거주지역: {info.get('거주지역', 'N/A')}")
                 logging.info(f"국적: {info.get('국적', 'N/A')}")
                 logging.info(f"체류자격: {info.get('체류자격', 'N/A')}")
                 logging.info(f"추가정보: {info.get('추가정보', 'N/A')}")
-                logging.info(f"해결방법: {result.get('해결방법', 'N/A')[:100]}...")  # 해결방법은 앞부분만
+                logging.info(f"해결방법: {result.get('해결방법', 'N/A')}")
 
                 # 컨텍스트 구성
                 context += f"""
@@ -153,7 +153,6 @@ class ChatModel:
                     - 체류자격: {info.get('체류자격', 'N/A')}
                     - 추가정보: {info.get('추가정보', 'N/A')}
                     - 해결방법: {result.get('해결방법', 'N/A')}
-
                     """
 
             # 전역 프롬프트 템플릿 사용

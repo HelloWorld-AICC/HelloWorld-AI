@@ -13,7 +13,27 @@ import certifi
 app = func.FunctionApp()
 
 load_dotenv(verbose=True)
-logging.basicConfig(filename='function_app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# 로컬 디렉터리에서 로그 파일 저장 경로 설정
+log_file_path = os.path.join(os.getcwd(), "logs/function_app.log")  # 현재 디렉터리
+print(f"Log file will be saved at: {log_file_path}")
+
+# 기존 핸들러 제거
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+
+# 로그 설정
+logging.basicConfig(
+    filename=log_file_path,
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+# 추가 핸들러 (콘솔 로그도 포함)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+console_handler.setFormatter(formatter)
+logging.getLogger().addHandler(console_handler)
 
 logging.info("Starting application initialization...")
 
@@ -29,8 +49,6 @@ print(certifi.where())
 # Load DB once at startup
 try:
     logging.info("Starting database initialization...")
-    # client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"],
-    #                      ssl=True)
     client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"],
                          tls=True,
                         tlsCAFile=certifi.where())
@@ -72,6 +90,7 @@ def question(req: func.HttpRequest) -> func.HttpResponse:
         is_first_query = len([item for item in conversation if item['speaker'] == 'human']) == 1
 
         if is_first_query:
+            logging.info(f"First user query detected: {user_query}")
             response = chat_model.generate_ai_response_first_query(conversation_history="",
                                                                 query=user_query,
                                                                 collection=TEST_COLLECTION)
