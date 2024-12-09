@@ -1,17 +1,20 @@
 import azure.functions as func
 import logging
 import json
-import os
+import sys,os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
 from pymongo import MongoClient
 from model import ChatModel
+import certifi
 
 app = func.FunctionApp()
 
 load_dotenv(verbose=True)
+logging.basicConfig(filename='function_app.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
 logging.info("Starting application initialization...")
 
 with open(f'configs/config.json', 'r') as f:
@@ -22,10 +25,15 @@ logging.info(f"Config file loaded")
 os.environ["MONGODB_ATLAS_CLUSTER_URI"] = os.getenv("MONGODB_ATLAS_CLUSTER_URI")
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_KEY")
 
+print(certifi.where())
 # Load DB once at startup
 try:
     logging.info("Starting database initialization...")
-    client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"], ssl=True)
+    # client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"],
+    #                      ssl=True)
+    client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"],
+                         tls=True,
+                        tlsCAFile=certifi.where())
     
     # 두 컬렉션 모두 pymongo Collection 객체로 초기화
     MONGODB_COLLECTION = client[config['path']['db_name']][config['path']['collection_name']]
