@@ -35,7 +35,7 @@ try:
     client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"], ssl=True)
     
     # 두 컬렉션 모두 pymongo Collection 객체로 초기화
-    MONGODB_COLLECTION = client[config['path']['db_name']]['foreigner_legalQA_v2'] # v2 적용
+    MONGODB_COLLECTION = client[config['path']['db_name']]['foreigner_legalQA']
     TEST_COLLECTION = client[config['path']['db_name']]['foreigner_legal_test']
     
     logging.info("Database initialized successfully.")
@@ -85,7 +85,7 @@ def generate_ai_response(conversation_history, query, collection):
             {
                 "$vectorSearch": {
                     "index": "vector_index",
-                    "path": "Embedding",
+                    "path": "embedding",
                     "queryVector": query_embedding,
                     "numCandidates": 100,
                     "limit": 3
@@ -93,9 +93,8 @@ def generate_ai_response(conversation_history, query, collection):
             },
             {
                 "$project": {
-                    "title": 1, #1은 포함한다는 의미
-                    "contents": 1,
-                    "url": 1,
+                    "text": 1,           # text 필드만 프로젝션
+                    "source": 1,         # 출처 정보도 포함
                     "score": { "$meta": "vectorSearchScore" },
                     "_id": 0
                 }
@@ -114,15 +113,13 @@ def generate_ai_response(conversation_history, query, collection):
                 # 유사 문서 로깅
                 logging.info(f"\n[유사 문서 {idx}]")
                 logging.info(f"유사도 점수: {result.get('score', 'N/A')}")
-                logging.info(f"제목: {result.get('title', 'N/A')}")
-                logging.info(f"URL: {result.get('url', 'N/A')}")
-                logging.info(f"내용: {result.get('contents', 'N/A')[:200]}...")  # 앞부분만 로깅
+                logging.info(f"출처: {result.get('source', 'N/A')}")
+                logging.info(f"내용: {result.get('text', 'N/A')[:200]}...")  # 앞부분만 로깅
 
                 # 컨텍스트에 추가
                 context += f"""
-관련 사례 {idx} (출처: {result.get('url', 'N/A')}):
-제목: {result.get('title', 'N/A')}
-내용: {result.get('contents', 'N/A')}
+관련 사례 {idx} (출처: {result.get('source', 'N/A')}):
+{result.get('text', '')}
 
 """
 
@@ -169,7 +166,7 @@ def generate_ai_response_first_query(query, collection):
                     # "index": "vector_index",
                     # "path": "내담자_정보.Embedding",
                     "index": "vector_index",
-                    "path": "내담자_정보.Embedding",
+                    "path": "내담자_정보_제목.Embedding",
                     "queryVector": query_embedding,
                     "exact": True,
                     "limit": 3
