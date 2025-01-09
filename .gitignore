@@ -4,3 +4,12 @@ new_env
 myenv
 .env
 Azure/local.settings.json
+
+Azure/__pycache__/
+Azure/.python_packages
+
+.venv/
+
+.vscode/
+
+
