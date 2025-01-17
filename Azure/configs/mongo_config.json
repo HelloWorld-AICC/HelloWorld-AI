@@ -6,6 +6,7 @@
         "index_name": "vector_index"
     },
     "openai_chat_inference": {
+        "embedding":"text-embedding-3-large",
         "model": "gpt-4o-mini",
         "frequency_penalty": 0,
         "logprobs": null,

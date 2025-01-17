@@ -3,13 +3,15 @@ venv
 new_env
 myenv
 .env
-Azure/local.settings.json
 
+# Azure 세팅
+Azure/local.settings.json
 Azure/__pycache__/
 Azure/.python_packages
 
 .venv/
 
+# vs 코드 세팅
 .vscode/
 
 

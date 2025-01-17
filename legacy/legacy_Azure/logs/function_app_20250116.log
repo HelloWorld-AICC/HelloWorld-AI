@@ -1,0 +1,559 @@
+Log file access test
+Log file access test
+2025-01-16 15:58:19 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 15:58:19 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 15:58:19 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 15:58:19 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 15:58:19 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 15:58:20 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 15:58:20 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 15:58:20 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 15:58:20 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 15:58:20 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 47aa83ed-6d91-4f6b-bbcc-7658cfa57c16, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\���� ȭ��\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 15:58:20 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 15:58:20 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 15:58:20 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 47aa83ed-6d91-4f6b-bbcc-7658cfa57c16, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 15:58:20 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 47aa83ed-6d91-4f6b-bbcc-7658cfa57c16, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\���� ȭ��\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 15:58:20 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 15:58:20 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 47aa83ed-6d91-4f6b-bbcc-7658cfa57c16, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 15:58:37 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 15:58:37 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 15:58:37 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 15:58:37 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 15:58:37 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 15:58:37 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 15:58:37 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 15:58:37 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 15:58:37 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 15:58:37 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID eb3869ef-def6-468b-9fc3-66ad98b4a0f6, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\���� ȭ��\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 15:58:37 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 15:58:37 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 15:58:37 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: eb3869ef-def6-468b-9fc3-66ad98b4a0f6, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 15:58:37 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID eb3869ef-def6-468b-9fc3-66ad98b4a0f6, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\���� ȭ��\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 15:58:37 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 15:58:37 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: eb3869ef-def6-468b-9fc3-66ad98b4a0f6, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 15:58:55 - azure_functions_worker - INFO - Received FunctionInvocationRequest, request ID: eb3869ef-def6-468b-9fc3-66ad98b4a0f6, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0, function name: question, invocation ID: 0119a458-88d6-46c4-b2b7-c605f7edb453, function type: sync, timestamp (UTC): 2025-01-16 06:58:55.651835, sync threadpool max workers: 1000
+2025-01-16 15:58:55 - root - INFO - Question function triggered.
+2025-01-16 15:58:55 - shared_code.chat_service - INFO - ====== AI ���� ���� ���� ======
+2025-01-16 15:58:55 - shared_code.chat_service - INFO - �Էµ� ����: �ȳ��ϼ���. ���� 3�� ° ȸ�翡�� �ӱ��� ���� ���ϰ� �ֽ��ϴ�.
+2025-01-16 15:58:55 - shared_code.chat_service - INFO - 1. �Ӻ��� �� �ʱ�ȭ �� ���� ����ȭ ����...
+2025-01-16 15:58:57 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-01-16 15:58:57 - shared_code.chat_service - INFO -    ���� ����ȭ �Ϸ�
+2025-01-16 15:58:57 - shared_code.chat_service - INFO - 2. MongoDB���� ���� ���� �˻� ����...
+2025-01-16 15:58:57 - shared_code.chat_service - INFO -    �˻��� ���� ���� ��: 3��
+2025-01-16 15:58:57 - shared_code.chat_service - INFO - 3. �˻� ����� ���ؽ�Ʈ ���� ��...
+2025-01-16 15:58:57 - shared_code.chat_service - INFO - 
+                ���� ���1 (��ó: https://www.moel.go.kr/minwon/fastcounsel/fastcounselView.do?inetDcssMngId=202206031045542061000):
+                ����: �ȳ��ϼ���.����ȸ��ٴϰ� �ִµ� 3���� ���� ������� ���޸����� ���߱��ؼ� �ϴµ� ���� �޶�� �ߴµ� ���� ���� �ܱ��ε� �� ���޸������� �ʿ��ϳİ� �Ͻô���������� �Ű��ϰ� ������
+                ����: �ٷα��ع� ��43����2�׿� �ǰ� ����ڴ� �ٷ��ڿ��� �ӱ��� �ſ� 1ȸ �̻� ������ ��¥�� ���Ͽ� �����ؾ� �մϴ�.(����� ��Ģ)
+
+- �����Ͽ� ���� ������ ����뵿�� ������((www.moel.go.kr) ������ �ٷα��ع� �����ڷ�(�ӱݸ����� ����)���� ������ �ֽñ� �ٶ��, ���ǳ��뿡 ���Ͽ� ��簣 �̰��� ��ӵǴ� ����� �뵿��ǿ� ���� ������ �������������� �ִ� ���� ����뵿������ �����Ͽ� �ٷΰ������� ������ �޾ƺ��ñ� �ٶ��ϴ�.
+
+�� ����� ���� �������뵿(��)û ã�� : ����뵿�� Ȩ������(www.moel.go.kr) �� ����� '����Ұ�' ���� ����û/���뼾�� ã�� �� ���������� ����뵿���� Ȩ������ �ٷΰ��� �� ��� ����û�Ұ������� ã�ƿ��ô±�(��û)���� �ּ� �� ����ó Ȯ��
+                
+2025-01-16 15:58:57 - shared_code.chat_service - INFO - 
+                ���� ���2 (��ó: https://www.easylaw.go.kr/CSP/UnScOnhunListRlt.laf?onhunqnaAstSeq=&curPage=1&outmax=10&sch=%EC%99%B8%EA%B5%AD%EC%9D%B8&fsort=%5C):
+                ����: �Ƹ�����Ʈ�� �� ȸ��κ��� 6����ġ �ӱ��� ���޹��� ���ϰ� �ֽ��ϴ�. ȸ��� ������ �ϸ� ��� �شٰ��� �� �� �� ���� ������ ���� �ʰ� �ִµ���, �ذ��� �� �ִ� ����� �������?
+                ����: �ӱݵ��� ���޹��� ���� �ӱ�ü�� ������ �ٷ��ڴ� ������� �����ϴ� �������뵿������ �и� �ӱݵ��� ���޹ް� �ش޶�� ����(����)�̳� ����ڸ� ���ٷα��ع��� �������� ó���� �޶�� ���Ҹ� �� �� �ֽ��ϴ�. �� �ۿ��� �λ�Ҽ����� ü���ӱ��� ���� ���� ������, ���ѹ������������� ���������� �޾� �λ������� ������ �� �ֽ��ϴ�.
+�� ���ӱ�ü�ҡ��̶�?
+�� ���ӱ�ü�ҡ��̶� �ٷ��� �밡�� ���޵Ǵ� �ӱ�, �����, �� ���� ��ü�� ��ǰ�� �ٷ��� ���� ���� ���� �ʴ� ������ ���ٷα��ع��� ��36���� ��ǰû�� �ǹ��� ���ٷα��ع��� ��43���� �ӱ����� �ǹ��� ������ ���� �ǹ��մϴ�.
+�� ���� �������뵿������ ���� �Ǵ� ����
+�� �ӱݵ��� ���޹��� ���� �ٷ��ڴ� ü���ӱ��� ���� �� �ֵ��� �ش޶�� �������뵿������ �ٷΰ��������� �����ϰų� ����ڸ� ���ٷα��ع��� �������� ó���� �޶�� ������ �� �ֽ��ϴ�.
+�� �λ������� ���� �ذ�
+�� �ӱݵ��� ���޹��� ���� �ٷ��ڴ� ������� ����� ���з��ϰų� �λ�Ҽ��� �����ϴ� �� �λ������� ���� �ӱ�ü���� �ذ��� �� �ֽ��ϴ�.
+�� ���ѹ������������� ���� ��������
+�� �ӱ� �� ������ ü�� ��� ���� 3������ ����� �ӱ��� 400���� �̸��� �ӱ� �� ������ ü�ҷ� ���� ���رٷ���(���� ���� �ܱ��� ����)�� ���������� �� ���ѹ������������� ���������� ���� �� �ֽ��ϴ�.
+                
+2025-01-16 15:58:57 - shared_code.chat_service - INFO -    ���ؽ�Ʈ ���� �Ϸ�
+2025-01-16 15:58:57 - shared_code.chat_service - INFO - 4. ���� ��ȭ ��� ������ ��...
+2025-01-16 15:58:57 - shared_code.chat_service - INFO -    ��ȭ ��� ������ �Ϸ�
+2025-01-16 15:58:57 - shared_code.chat_service - INFO - 5. ���� ������Ʈ ���� ��...
+2025-01-16 15:58:57 - shared_code.chat_service - INFO -    ������Ʈ ���� �Ϸ�
+2025-01-16 15:58:57 - shared_code.chat_service - INFO - 6. GPT �𵨿� ��û�Ͽ� ���� ���� ��...
+2025-01-16 15:59:08 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-16 15:59:08 - shared_code.chat_service - INFO -    ���� ���� �Ϸ�
+2025-01-16 15:59:08 - shared_code.chat_service - INFO - ====== AI ���� ���� �Ϸ� ======
+
+2025-01-16 16:00:05 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 16:00:05 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 16:00:05 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 16:00:05 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 16:00:05 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 16:00:05 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 16:00:05 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 16:00:05 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 16:00:05 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 16:00:05 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID beea2eb0-1ffc-4f7f-b92d-4ea455cd2295, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\���� ȭ��\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 16:00:05 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 16:00:05 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 16:00:05 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: beea2eb0-1ffc-4f7f-b92d-4ea455cd2295, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 16:00:05 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID beea2eb0-1ffc-4f7f-b92d-4ea455cd2295, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\���� ȭ��\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 16:00:05 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 16:00:05 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: beea2eb0-1ffc-4f7f-b92d-4ea455cd2295, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 16:01:02 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 16:01:02 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 16:01:02 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 16:01:02 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 16:01:02 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 16:01:02 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 16:01:02 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 16:01:02 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 16:01:02 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 16:01:02 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID bff1848b-dd99-4049-86d8-b42fd56b1ffc, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 16:01:02 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 16:01:02 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 16:01:02 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: bff1848b-dd99-4049-86d8-b42fd56b1ffc, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 16:01:02 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID bff1848b-dd99-4049-86d8-b42fd56b1ffc, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 16:01:02 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 16:01:02 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: bff1848b-dd99-4049-86d8-b42fd56b1ffc, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 16:01:10 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 16:01:10 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 16:01:10 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 16:01:10 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 16:01:10 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 16:01:11 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 16:01:11 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 16:01:11 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 16:01:11 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 16:01:11 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 54a16d3d-b9f5-4c06-963d-154707a87a09, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 16:01:11 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 16:01:11 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 16:01:11 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 54a16d3d-b9f5-4c06-963d-154707a87a09, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 16:01:11 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 54a16d3d-b9f5-4c06-963d-154707a87a09, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 16:01:11 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 16:01:11 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 54a16d3d-b9f5-4c06-963d-154707a87a09, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 16:01:20 - azure_functions_worker - INFO - Received FunctionInvocationRequest, request ID: 54a16d3d-b9f5-4c06-963d-154707a87a09, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0, function name: question, invocation ID: 73a3e63b-d63c-4c91-9386-00ef092466d6, function type: sync, timestamp (UTC): 2025-01-16 07:01:20.775316, sync threadpool max workers: 1000
+2025-01-16 16:01:20 - root - INFO - Question function triggered.
+2025-01-16 16:01:20 - shared_code.chat_service - INFO - ====== AI 응답 생성 시작 ======
+2025-01-16 16:01:20 - shared_code.chat_service - INFO - 입력된 쿼리: 안녕하세요. 현재 3달 째 회사에서 임금을 받지 못하고 있습니다.
+2025-01-16 16:01:20 - shared_code.chat_service - INFO - 1. 임베딩 모델 초기화 및 쿼리 벡터화 시작...
+2025-01-16 16:01:21 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-01-16 16:01:22 - shared_code.chat_service - INFO -    쿼리 벡터화 완료
+2025-01-16 16:01:22 - shared_code.chat_service - INFO - 2. MongoDB에서 유사 문서 검색 시작...
+2025-01-16 16:01:22 - shared_code.chat_service - INFO -    검색된 유사 문서 수: 3개
+2025-01-16 16:01:22 - shared_code.chat_service - INFO - 3. 검색 결과로 컨텍스트 구성 중...
+2025-01-16 16:01:22 - shared_code.chat_service - INFO - 
+
+
+                관련 사례1 (출처: https://www.moel.go.kr/minwon/fastcounsel/fastcounselView.do?inetDcssMngId=202206031045542061000):
+                제목: 안녕하세요.저는회사다니고 있는데 3월달 부터 사장님이 월급명세서 무발급해서 하는데 제가 달라고 했는데 저를 보고 외국인데 왜 월급명세서를 필요하냐고 하시더라고ㆍ제가 신고하고 싶은데
+                내용: 근로기준법 제43조제2항에 의거 사용자는 근로자에게 임금을 매월 1회 이상 일정한 날짜를 정하여 지급해야 합니다.(정기불 원칙)
+
+- 관련하여 상세한 내용은 고용노동부 누리집((www.moel.go.kr) “개정 근로기준법 설명자료(임금명세서 교부)”를 참고해 주시길 바라며, 질의내용에 대하여 노사간 이견이 계속되는 경우라면 노동사건에 대한 실질적 지도감독권한이 있는 관할 지방노동관서로 질의하여 근로감독관의 조력을 받아보시길 바랍니다.
+
+◆ 사업장 관할 지방고용노동(지)청 찾기 : 고용노동부 홈페이지(www.moel.go.kr) → 상단의 '기관소개' 에서 지방청/고용센터 찾기 → 관할지역별 지방노동관서 홈페이지 바로가기 → 상단 ‘지청소개’에서 찾아오시는길(본청)에서 주소 및 연락처 확인
+                
+
+
+2025-01-16 16:01:22 - shared_code.chat_service - INFO - 
+
+
+                관련 사례2 (출처: https://www.easylaw.go.kr/CSP/UnScOnhunListRlt.laf?onhunqnaAstSeq=&curPage=1&outmax=10&sch=%EC%99%B8%EA%B5%AD%EC%9D%B8&fsort=%5C):
+                제목: 아르바이트를 한 회사로부터 6개월치 임금을 지급받지 못하고 있습니다. 회사로 연락을 하면 계속 준다고만 할 뿐 몇 달이 지나도 주질 않고 있는데요, 해결할 수 있는 방법이 없을까요?
+                내용: 임금등을 지급받지 못한 임금체불 상태의 근로자는 사업장을 관할하는 지방고용노동관서에 밀린 임금등을 지급받게 해달라는 진정(陳情)이나 사용자를 「근로기준법」 위반으로 처벌해 달라는 고소를 할 수 있습니다. 이 밖에도 민사소송으로 체불임금을 받을 수도 있으며, 대한법률구조공단의 법률구조를 받아 민사절차를 진행할 수 있습니다.
+◇ “임금체불”이란?
+☞ “임금체불”이란 근로의 대가로 지급되는 임금, 보상금, 그 밖의 일체의 금품을 근로자 동의 없이 주지 않는 것으로 「근로기준법」 제36조의 금품청산 의무나 「근로기준법」 제43조의 임금지급 의무를 위반한 것을 의미합니다.
+◇ 관할 지방고용노동관서에 진정 또는 고소
+☞ 임금등을 지급받지 못한 근로자는 체불임금을 받을 수 있도록 해달라고 지방고용노동관서나 근로감독관에게 진정하거나 사용자를 「근로기준법」 위반으로 처벌해 달라고 고소할 수 있습니다.
+◇ 민사절차를 통한 해결
+☞ 임금등을 지급받지 못한 근로자는 사용자의 재산을 가압류하거나 민사소송을 제기하는 등 민사절차를 통해 임금체불을 해결할 수 있습니다.
+◇ 대한법률구조공단을 통한 법률구조
+☞ 임금 및 퇴직금 체불 당시 최종 3월분의 월평균 임금이 400만원 미만인 임금 및 퇴직금 체불로 인한 피해근로자(국내 거주 외국인 포함)는 무료법률상담 등 대한법률구조공단의 법률구조를 받을 수 있습니다.
+                
+
+
+2025-01-16 16:01:22 - shared_code.chat_service - INFO - 
+
+
+                관련 사례3 (출처: N/A):
+                제목: 
+작년 6월까지 근무하고 계약기간 만료로 실업급여 수령
+현재 일하지 않고 네이버 카페 포인트 활동으로 소득 발생
+8월에 아기 출산 예정
+
+                내용: [상담내용]
+고용보험 미적용자 출산급여 궁금한 점
+작년 6월까지 근무하고 계약기간 만료로 실업급여 수령 했었습니다 그 이후로는 쭉 일을 안하고 있었는데네이버 카페 포인트 활동은 하고있었어요 이게 포인트가 모이면 현급으로 환급해주는데 소득세 3.3%를 떼고 줘요근데 많은 돈은 아니고 10만원 언저리인데요 8월에 아기가 태어날 예정인데고용보험 미적용자도 소득이 있으면 출산급여를 신청할 수 있다고 되어있더라구요 이것도 소득으로 인정되나요?? 신청 가능할까요?
+
+[해결방법]
+​고용보험 미적용자에 대한 출산휴가 급여 지원제도는 아래 사항을 참고바랍니다.◆ 지원 대상○ 소득활동을 하지만 고용보험의 출산전후휴가 급여를 지원받지 못하는 출산 여성- 소득수준에 대한 제한(상한 및 하한)은 두지 않음- 외국인 제외(단, 결혼이민여성은 포함), 유산·사산 포함(모자보건법 제14조에 따른 인공임신중절 포함)◆ 신청방법 및 신청자○ 출산여성 본인(대리신청 가능)○ 거주지 또는 소속사업장 소재지 관할 고용센터 방문 또는 우편(신청인이 선택 가능),고용보험 홈페이지 온라인 (www.ei.go.kr) 신청 가능◆ 신청시기○ 출산일부터 신청 가능하며, 출산일로부터 1년 이내 신청 ,신청기간 내 1회 신청◆ 지원 수준○ 지원기간: 3개월○ 지급금액: 월 50만원씩○ 지급결정: 신청 접수 후 14일 이내 지급(부지급)결정 및 통지◆ 구비서류- 출산급여 신청서- 소득활동 증빙자료(건강보험자격득실확인서, 부가가치세면세사업자 수입금액증명, 기타 소득활동 및 소득발생 입증자료)- (적용제외사업, 미성립사업장의 경우) 사업주 확인서※ 필요할 경우 추가 서류 별도로 요청할 수 있음◆ 지원 대상 < 근로자 유형>ㅇ (1유형) 고용보험 피보험자로서 180일 수급요건 미충족자ㅇ (2유형) 고용보험법상 적용제외 사업의 근로자 및 적용제외자(간헐적 소득활동)ㅇ (3유형) 고용보험 미성립 사업장의 미가입 근로자(*고용보험 성립 사업장의 미가입근로자는 지원 제외)​자세한 사항은 고객상담센터 1350으로 문의하시기 바랍니다.
+                
+
+
+2025-01-16 16:01:22 - shared_code.chat_service - INFO -    컨텍스트 구성 완료
+2025-01-16 16:01:22 - shared_code.chat_service - INFO - 4. 이전 대화 기록 포맷팅 중...
+2025-01-16 16:01:22 - shared_code.chat_service - INFO -    대화 기록 포맷팅 완료
+2025-01-16 16:01:22 - shared_code.chat_service - INFO - 5. 최종 프롬프트 구성 중...
+2025-01-16 16:01:22 - shared_code.chat_service - INFO -    프롬프트 구성 완료
+2025-01-16 16:01:22 - shared_code.chat_service - INFO - 6. GPT 모델에 요청하여 응답 생성 중...
+2025-01-16 16:01:31 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-16 16:01:31 - shared_code.chat_service - INFO -    응답 생성 완료
+2025-01-16 16:01:31 - shared_code.chat_service - INFO - ====== AI 응답 생성 완료 ======
+
+2025-01-16 16:35:58 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 16:35:58 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 16:35:58 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 16:35:58 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 16:35:58 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 16:35:58 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 16:35:58 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 16:35:58 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 16:35:58 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 16:35:59 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID f2f83619-ba7c-4027-92e3-b486b8699078, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 16:35:59 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 16:35:59 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 16:35:59 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: f2f83619-ba7c-4027-92e3-b486b8699078, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 16:35:59 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID f2f83619-ba7c-4027-92e3-b486b8699078, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 16:35:59 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 16:35:59 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: f2f83619-ba7c-4027-92e3-b486b8699078, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 16:51:14 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 16:51:14 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 16:51:14 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 16:51:14 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 16:51:14 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 16:51:14 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 16:51:14 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 16:51:14 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 16:51:14 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 16:51:15 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 7e186d29-7052-4c95-bd29-1db1a5d009e7, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 16:51:15 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 16:51:15 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 16:51:15 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 7e186d29-7052-4c95-bd29-1db1a5d009e7, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 16:51:15 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 7e186d29-7052-4c95-bd29-1db1a5d009e7, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 16:51:15 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 16:51:15 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 7e186d29-7052-4c95-bd29-1db1a5d009e7, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 16:51:48 - azure_functions_worker - INFO - Received FunctionInvocationRequest, request ID: 7e186d29-7052-4c95-bd29-1db1a5d009e7, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0, function name: question, invocation ID: 3afe0f72-71fb-45a2-bc57-da851e4c5520, function type: sync, timestamp (UTC): 2025-01-16 07:51:48.671206, sync threadpool max workers: 1000
+2025-01-16 16:51:48 - root - INFO - Question function triggered.
+2025-01-16 16:51:48 - shared_code.chat_service - INFO - ====== AI 응답 생성 시작 ======
+2025-01-16 16:51:48 - shared_code.chat_service - INFO - 입력된 쿼리: 체류기간 연장을 위해선 어디로 가야하죠?
+2025-01-16 16:51:48 - shared_code.chat_service - INFO - 1. 임베딩 모델 초기화 및 쿼리 벡터화 시작...
+2025-01-16 16:51:50 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-01-16 16:51:50 - shared_code.chat_service - INFO -    쿼리 벡터화 완료
+2025-01-16 16:51:50 - shared_code.chat_service - INFO - 2. MongoDB에서 유사 문서 검색 시작...
+2025-01-16 16:51:51 - shared_code.chat_service - INFO -    검색된 유사 문서 수: 3개
+2025-01-16 16:51:51 - shared_code.chat_service - INFO - 3. 검색 결과로 컨텍스트 구성 중...
+2025-01-16 16:51:51 - shared_code.chat_service - INFO - 
+
+
+                관련 사례1 (출처: https://www.easylaw.go.kr/CSP/UnScOnhunListRlt.laf?onhunqnaAstSeq=&curPage=1&outmax=10&sch=%EC%99%B8%EA%B5%AD%EC%9D%B8&fsort=%5C):
+                제목: 유학(D-2) 사증이 곧 만료되어 체류기간 연장신청을 하려고 합니다. 어떻게 하면 되나요?
+                내용: 외국인유학생이 체류기간을 초과해서 계속 국내에 체류하려면 그 체류기간의 만료 전에 체류기간 연장허가를 받아야 합니다. 체류기간 연장허가를 받으려면 출입국·외국인청장(이하 “청장”이라 함), 출입국·외국인사무소장(이하 “사무소장”이라 함), 출입국·외국인청 출장소장 또는 출입국·외국인사무소 출장소장(이하 "출장소장”이라 함)에게 체류기간 연장허가신청서와 필요한 첨부 서류들을 제출해야 합니다.
+◇ 체류기간 연장허가의 의의
+☞ 외국인유학생이 체류기간을 초과해서 계속 국내에 체류하려면 그 체류기간의 만료 전에 체류기간 연장허가를 받아야 합니다.
+☞ 체류기간이 초과했음에도 불구하고 체류기간을 연장하지 않으면 대한민국 밖으로 강제퇴거될 수 있으며, 3년 이하의 징역 또는 3천만원 이하의 벌금에 처해집니다.
+◇ 체류기간 연장 신청방법
+☞ 체류기간 연장허가신청은 외국인유학생 본인이 직접 할 수 있습니다. 다만, 외국인유학생이 17세 미만인 경우에는 본인 외에도 부모, 사실상의 부양자, 형제자매, 신원보증인이나 그 밖의 동거인이 할 수 있습니다.
+☞ 유학(D-2) 사증의 체류기간 연장허가를 받으려면 청장·사무소장 또는 출장소장에게 체류기간 연장허가신청서와 함께 다음의 서류를 제출해야 합니다.
+· 공통 제출 서류
+√ 여권
+√ 외국인등록증(외국인등록을 한 경우에 한함)
+√ 출국예약 항공권 사본(출국을 위한 체류기간 연장허가신청인 경우에 한함)
+· 전문대학 이상의 정규과정 교육을 받는 경우 추가 서류: 재학증명서(석·박사 논문을 준비하고 있는 경우는 지도교수의 추천서 또는 정부초청장학생 확인서로 대신할 수 있음), 체류지 입증 서류
+· 특정의 연구를 하고 있는 경우 추가 서류: 연구 활동을 입증하는 서류, 체류지 입증 서류
+                
+
+
+2025-01-16 16:51:51 - shared_code.chat_service - INFO - 
+
+
+                관련 사례2 (출처: https://www.moel.go.kr/minwon/fastcounsel/fastcounselView.do?inetDcssMngId=202104301519391731000):
+                제목: 체류기간 1년 연장 대상자가 회사로부터 재 고용이 되지 않을시 외국인 친구는 언제까지몇개월내 재 취업을 해야 계속 체류 할수 있는지 궁금합니다. 계약은8월17일 만료입니다
+                내용: 죄송합니다. 귀 질의의 경우 번거로우시더라도 거주지 관할 지방고용노동관서 지역협력과 외국인려지원팀으로 문의하여 확인 받아 보시기 바랍니다.
+
+※ 고용노동부 홈페이지>기관소개>조직안내>소속기관> 관할 지방관서 클릭>직원,연락처 에서 업무담당자 및 연락처 확인할 수 있습니다.
+                
+
+
+2025-01-16 16:51:51 - shared_code.chat_service - INFO - 
+
+
+                관련 사례3 (출처: https://www.easylaw.go.kr/CSP/UnScOnhunListRlt.laf?onhunqnaAstSeq=&curPage=1&outmax=10&sch=%EC%99%B8%EA%B5%AD%EC%9D%B8&fsort=%5C):
+                제목: 한국에 비자를 발급받고 지내던 중, 체류기간이 얼마 남지 않았다는 사실을 알게 되었습니다. 비자를 연장하려면 어떻게 해야 하나요?
+                내용: 외국인이 체류기간을 초과하여 계속 체류하려면 법령으로 정하는 바에 따라 체류기간이 끝나기 전에 비자연장허가를 받아야 합니다.
+◇ 신청방법
+☞ 비자연장허가의 신청은 본인이 직접 해야 합니다. 다만, 신청인이 17세 미만인데 본인이 허가신청을 하지 않는 경우에는 그의 부모, 사실상의 부양자, 형제자매, 신원보증인, 그 밖의 동거인이 신청의무자가 되어 비자연장허가를 신청해야 합니다.
+☞ 비자연장허가를 받으려는 사람은 체류기간이 끝나기 전에 체류기간 연장허가 신청서에 체류자격별로 정하는 서류를 첨부하여 출입국·외국인청장, 출입국·외국인사무소장, 출입국·외국인청 출장소장 또는 출입국·외국인사무소 출장소장에게 제출해야 합니다.
+☞ 비자연장을 신청하려면 방문하는 출입국·외국인청, 출입국·외국인사무소, 출입국·외국인청 출장소 또는 출입국·외국인사무소 출장소에 온라인으로 방문 예약 후 방문하셔야 하며, 하이코리아 홈페이지의 전자민원이나 출입국민원 대행기관을 이용하여 방문하지 않고 신청하실 수도 있습니다. 다만, 임산부 및 장애인 등 법무부장관이 정하는 외국인은 온라인 방문 예약을 하지 않을 수 있습니다.
+※ 온라인 방문예약은 <하이코리아 홈페이지-민원신청-방문예약>에서 가능하며, 출입국민원 대행기관 관련 내용은 <하이코리아 홈페이지-민원신청-출입국민원 대행기관 이용>에서 확인하실 수 있습니다.
+※ 전자민원을 통한 비자연장신청은 <하이코리아 홈페이지-민원신청-전자민원신청>에서 가능하며, 일부 체류자격의 경우 제한이 있을 수 있습니다. 관련한 내용은 하이코리아 홈페이지를 확인하시거나 외국인종합 안내센터(☎1345)로 문의하시기 바랍니다.
+◇ 비자연장허가를 받지 않은 경우에 대한 법적 제재
+☞ 외국인이 미리 비자연장허가를 받지 않고 체류기간을 초과하여 체류한 경우 대한민국 밖으로 강제퇴거당할 수 있습니다.
+☞ 또한, 3년 이하의 징역 또는 3천만원 이하의 벌금에 처해집니다.
+                
+
+
+2025-01-16 16:51:51 - shared_code.chat_service - INFO -    컨텍스트 구성 완료
+2025-01-16 16:51:51 - shared_code.chat_service - INFO - 4. 이전 대화 기록 포맷팅 중...
+2025-01-16 16:51:51 - shared_code.chat_service - INFO -    대화 기록 포맷팅 완료
+2025-01-16 16:51:51 - shared_code.chat_service - INFO - 5. 최종 프롬프트 구성 중...
+2025-01-16 16:51:51 - shared_code.chat_service - INFO -    프롬프트 구성 완료
+2025-01-16 16:51:51 - shared_code.chat_service - INFO - 6. GPT 모델에 요청하여 응답 생성 중...
+2025-01-16 16:51:55 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-16 16:51:55 - shared_code.chat_service - INFO -    응답 생성 완료
+2025-01-16 16:51:55 - shared_code.chat_service - INFO - ====== AI 응답 생성 완료 ======
+
+2025-01-16 20:48:20 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 20:48:20 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 20:48:20 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 20:48:20 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 20:48:20 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 20:48:20 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 20:48:20 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 20:48:20 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 20:48:20 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 20:48:21 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 8004c0d7-f864-4cd2-862a-9137d87d94a6, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\azure
+2025-01-16 20:48:21 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 20:48:21 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 20:48:21 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 8004c0d7-f864-4cd2-862a-9137d87d94a6, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 20:48:21 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 8004c0d7-f864-4cd2-862a-9137d87d94a6, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\azure
+2025-01-16 20:48:21 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 20:48:21 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 8004c0d7-f864-4cd2-862a-9137d87d94a6, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 20:49:23 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 20:49:23 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 20:49:23 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 20:49:23 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 20:49:23 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 20:49:25 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 20:49:25 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 20:49:25 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 20:49:25 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 20:49:25 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 86dedc6a-4689-469f-bb3a-5565066bf61a, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\azure
+2025-01-16 20:49:25 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 20:49:25 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 20:49:25 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 86dedc6a-4689-469f-bb3a-5565066bf61a, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 20:49:25 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 86dedc6a-4689-469f-bb3a-5565066bf61a, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\azure
+2025-01-16 20:49:25 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 20:49:25 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 86dedc6a-4689-469f-bb3a-5565066bf61a, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 20:49:37 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 20:49:37 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 20:49:37 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 20:49:37 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 20:49:37 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 20:49:37 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 20:49:37 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 20:49:37 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 20:49:37 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 20:49:37 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 25ac2f2b-6ecd-4a3c-9cc4-8370faa5f05b, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\azure
+2025-01-16 20:49:37 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 20:49:37 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 20:49:37 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 25ac2f2b-6ecd-4a3c-9cc4-8370faa5f05b, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 20:49:37 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 25ac2f2b-6ecd-4a3c-9cc4-8370faa5f05b, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\azure
+2025-01-16 20:49:37 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 20:49:37 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 25ac2f2b-6ecd-4a3c-9cc4-8370faa5f05b, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 21:10:00 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 21:10:00 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 21:10:00 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 21:10:00 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 21:10:00 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 21:10:00 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 21:10:00 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 21:10:00 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 21:10:00 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 21:10:00 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID b16d57c5-16bf-4df8-8edf-702d9a228a5d, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:10:00 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 21:10:00 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 21:10:00 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: b16d57c5-16bf-4df8-8edf-702d9a228a5d, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 21:10:00 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID b16d57c5-16bf-4df8-8edf-702d9a228a5d, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:10:00 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 21:10:00 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: b16d57c5-16bf-4df8-8edf-702d9a228a5d, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 21:10:24 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 21:10:24 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 21:10:24 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 21:10:24 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 21:10:24 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 21:10:24 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 21:10:24 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 21:10:24 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 21:10:24 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 21:10:24 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 4dbc963c-b031-4723-a061-e6d700885cd3, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:10:24 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 21:10:24 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 21:10:24 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 4dbc963c-b031-4723-a061-e6d700885cd3, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 21:10:24 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 4dbc963c-b031-4723-a061-e6d700885cd3, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:10:24 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 21:10:24 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 4dbc963c-b031-4723-a061-e6d700885cd3, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 21:10:37 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 21:10:37 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 21:10:37 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 21:10:37 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 21:10:37 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 21:10:37 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 21:10:37 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 21:10:37 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 21:10:37 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 21:10:38 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID b5bf940f-9d01-4bd9-a9fe-1c958d548361, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:10:38 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 21:10:38 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 21:10:38 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: b5bf940f-9d01-4bd9-a9fe-1c958d548361, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 21:10:38 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID b5bf940f-9d01-4bd9-a9fe-1c958d548361, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:10:38 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 21:10:38 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: b5bf940f-9d01-4bd9-a9fe-1c958d548361, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 21:10:44 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 21:10:44 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 21:10:44 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 21:10:44 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 21:10:44 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 21:10:44 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 21:10:44 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 21:10:44 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 21:10:45 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 21:10:45 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 3474d378-2c3f-4d19-8eae-b123dd23d0d8, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:10:45 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 21:10:45 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 21:10:45 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 3474d378-2c3f-4d19-8eae-b123dd23d0d8, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 21:10:45 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID 3474d378-2c3f-4d19-8eae-b123dd23d0d8, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:10:45 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 21:10:45 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: 3474d378-2c3f-4d19-8eae-b123dd23d0d8, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 21:32:08 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 21:32:08 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 21:32:08 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 21:32:08 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 21:32:08 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 21:32:08 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 21:32:09 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 21:32:09 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 21:32:09 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 21:32:09 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID e3e1f454-3468-4005-8f53-6eb2db078f6d, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:32:09 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 21:32:09 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 21:32:09 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: e3e1f454-3468-4005-8f53-6eb2db078f6d, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 21:32:09 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID e3e1f454-3468-4005-8f53-6eb2db078f6d, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:32:09 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 21:32:09 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: e3e1f454-3468-4005-8f53-6eb2db078f6d, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 21:32:15 - azure_functions_worker - INFO - Received FunctionInvocationRequest, request ID: e3e1f454-3468-4005-8f53-6eb2db078f6d, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0, function name: question, invocation ID: 269e291c-ab14-4818-a0d7-b97282cf981f, function type: sync, timestamp (UTC): 2025-01-16 12:32:15.614149, sync threadpool max workers: 1000
+2025-01-16 21:32:15 - root - INFO - Question function triggered.
+2025-01-16 21:32:15 - root - ERROR - Error processing question:HTTP request does not contain valid JSON data
+2025-01-16 21:43:46 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 21:43:46 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 21:43:46 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 21:43:46 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 21:43:46 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 21:43:46 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 21:43:54 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 21:43:54 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 21:43:54 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 21:43:56 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID f8e3e708-17a7-4bac-922c-09cd658f872a, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:43:56 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 21:43:56 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 21:43:56 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: f8e3e708-17a7-4bac-922c-09cd658f872a, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 21:43:56 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID f8e3e708-17a7-4bac-922c-09cd658f872a, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:43:56 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 21:43:56 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: f8e3e708-17a7-4bac-922c-09cd658f872a, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2025-01-16 21:44:25 - azure_functions_worker - INFO - Received FunctionInvocationRequest, request ID: f8e3e708-17a7-4bac-922c-09cd658f872a, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0, function name: question, invocation ID: 9a027285-5442-4b68-9102-f315b2d0229c, function type: sync, timestamp (UTC): 2025-01-16 12:44:25.651826, sync threadpool max workers: 1000
+2025-01-16 21:44:25 - root - INFO - Question function triggered.
+2025-01-16 21:44:25 - shared_code.chat_service - INFO - ====== AI 응답 생성 시작 ======
+2025-01-16 21:44:25 - shared_code.chat_service - INFO - 입력된 쿼리: 안녕하세요. 왜 작동을 안할까요.
+2025-01-16 21:44:25 - shared_code.chat_service - INFO - 1. 임베딩 모델 초기화 및 쿼리 벡터화 시작...
+2025-01-16 21:44:27 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2025-01-16 21:44:27 - shared_code.chat_service - INFO -    쿼리 벡터화 완료
+2025-01-16 21:44:27 - shared_code.chat_service - INFO - 2. MongoDB에서 유사 문서 검색 시작...
+2025-01-16 21:44:27 - shared_code.chat_service - INFO -    검색된 유사 문서 수: 3개
+2025-01-16 21:44:27 - shared_code.chat_service - INFO - 3. 검색 결과로 컨텍스트 구성 중...
+2025-01-16 21:44:27 - shared_code.chat_service - INFO - 
+
+
+                관련 사례1 (출처: https://www.comwel.or.kr/comwel/help/cyber/cyber_view.jsp?req_id=150171&req_tp=0&page=66&start_dt=&end_dt=&req_tp=&type=title&key=%EC%99%B8%EA%B5%AD%EC%9D%B8):
+                제목: 기타
+안녕하십니다. 근로복지공단 일자리안정자금 관련하여 문의 드립니다.
+
+홈페이지 서식 다운로드 관련 하여
+
+현재 합법적 외국인, 주 소정근로시간 15시간 미만자에 대한 고용보험 적용 사업장이나
+
+적용제외 사업장에 대한 서식이 혼용되거나 파일이 열리지 않습니다.
+
+빠른 시일 내로 정립해주시기 바랍니다.
+                내용: 고객님 안녕하십니까?
+
+근로복지공단 콜센터입니다.
+
+먼저 근로복지공단에 대한 고객님의 관심에 깊이 감사드립니다.
+
+
+○ 현재 일자리 안정자금 홈페이지(http://www.jobfunds.or.kr)는 서식자료 정비 등의 문제로 모든 신청서식의 다운로드가 되고 있지 않습니다. 빠른 시일 내 정비 완료 후 정상 다운로드 되도록 담당 부서에 전달하겠으며,
+
+저희 콜센터로 유선(전화 1588-0075) 요청하시면, 요청서식을 팩스 또는 이메일로 송부 드리고 있사오니 참고하시기 바라며 이용에 불편 드린 점 사과드리겠습니다.
+
+
+기타 궁금한 사항이 있으시면 근로복지공단 콜센터(☎1588-0075)로 전화를 주시면 성심 성의껏 답변해 드리겠습니다.
+
+이용해 주셔서 감사합니다. 오늘도 행복한 하루 보내시길 바랍니다.
+
+※ 인터넷 질의응답은 법적인 효력을 갖는 결정이나 판단이 아니므로 각종 권리 주장의 근거 또는 증거 자료등으로 사용할 수 없으니 참고하시기 바랍니다.
+                
+
+
+2025-01-16 21:44:27 - shared_code.chat_service - INFO - 
+
+
+                관련 사례2 (출처: https://www.moel.go.kr/minwon/fastcounsel/fastcounselView.do?inetDcssMngId=202208121600597711000):
+                제목: 안녕하십니까?
+직원이 구해지질 않아 힘들어하고 있습니다.
+워크넷에 3월에 구인기사 올렸는데 지원자가 없습니다.
+외국인 E9비자로 고용할수 있다는데 어떻게 진행하는 겁니까?
+                내용: 가. 외국인 고용허가서(E9) 또는 특례고용가능확인서(H2)는 다음 각 호의 요건을 모두 갖춘 사용자에게 발급이 가능하오며, 발급요건에 대해 안내해드립니다.
+
+1) 외국인력정책위원회에서 정한 외국인근로자의 도입, 허용 업종에 해당할 것
+- (E-9) 일반고용허가제 허용 업종은 제조업, 건설업, 서비스업 (건설폐기물처리업, 재생용 재료수집 및 판매업, 냉장·냉동 창고업, 출판업), 어업, 농축산물입니다.
+- 특례고용허가제(H-2) 허용 업종은 광업, 서비스업*업종에 해당됩니다.
+
+* 서비스 업종: 한식 음식점업(5611), 외국식 음식점업(5612), 기타 간이 음식점업(5619), 기관 구내식당업(56130)
+2) 내국인 구인노력(통상 14일)을 하였음에도 구인 신청한 내국인근로자의 전부 또는 일부를 채용하지 못하였을 것
+※ 외국인력 고용가능 업종에 적합한 경우여야하므로 사무직이나 관리직 등으로 구인 신청한 경우 내국인 구인노력 기간으로 인정하지 않음
+※ 구인조건을 갖춘 내국인구직자를 추천하였음에도 정당한 이유없이 2회 이상 채용을 거부한 경우는 제외
+
+3) 내국인 구인신청을 한 날의 2개월 전부터 고용허가서(특례고용가능확인서) 발급일까지 고용조정으로 내국인근로자를 이직시키지 않았을 것
+
+4) 내국인 구인신청을 한 날의 5개월 전부터 고용허가서(특례고용가능확인서) 발급일까지 임금을 체불하지 아니하였을 것
+
+5) 고용보험 및 산재보험에 가입하고 있을 것 (단, 미적용 사업장의 경우는 제외)
+
+6) 외국인근로자를 고용하고 있는 사업 또는 사업장인 경우 출국만기보험 및 보증보험에 가입하고 있을 것 (가입대상 사용자의 경우만 해당, 보험약관상 보험료 납부가 되어야 가입으로 봄)
+
+7) 외국인근로자의 고용이 제한된 사업 또는 사업장이 아닐 것
+
+보다 자세한 사항은 다소 불편하시더라도, 관할고용센터 담당자에게 직접 유선으로 확인하여 주시기 바랍니다.
+참고로, 업무집중시간대(10:00~16:00)에는 전화연결이 다소 어려우니, 동 시간 이후에 연결하시길 권유드립니다.
+고용노동부 홈페이지>기관소개>조직안내>소속기관> 관할 고용센터 클릭>직원,연락처 에서 업무담당자 및 연락처 확인할 수 있습니다.
+                
+
+
+2025-01-16 21:44:27 - shared_code.chat_service - INFO - 
+
+
+                관련 사례3 (출처: https://www.moel.go.kr/minwon/fastcounsel/fastcounselView.do?inetDcssMngId=202206031045542061000):
+                제목: 안녕하세요.저는회사다니고 있는데 3월달 부터 사장님이 월급명세서 무발급해서 하는데 제가 달라고 했는데 저를 보고 외국인데 왜 월급명세서를 필요하냐고 하시더라고ㆍ제가 신고하고 싶은데
+                내용: 근로기준법 제43조제2항에 의거 사용자는 근로자에게 임금을 매월 1회 이상 일정한 날짜를 정하여 지급해야 합니다.(정기불 원칙)
+
+- 관련하여 상세한 내용은 고용노동부 누리집((www.moel.go.kr) “개정 근로기준법 설명자료(임금명세서 교부)”를 참고해 주시길 바라며, 질의내용에 대하여 노사간 이견이 계속되는 경우라면 노동사건에 대한 실질적 지도감독권한이 있는 관할 지방노동관서로 질의하여 근로감독관의 조력을 받아보시길 바랍니다.
+
+◆ 사업장 관할 지방고용노동(지)청 찾기 : 고용노동부 홈페이지(www.moel.go.kr) → 상단의 '기관소개' 에서 지방청/고용센터 찾기 → 관할지역별 지방노동관서 홈페이지 바로가기 → 상단 ‘지청소개’에서 찾아오시는길(본청)에서 주소 및 연락처 확인
+                
+
+
+2025-01-16 21:44:27 - shared_code.chat_service - INFO -    컨텍스트 구성 완료
+2025-01-16 21:44:27 - shared_code.chat_service - INFO - 4. 이전 대화 기록 포맷팅 중...
+2025-01-16 21:44:27 - shared_code.chat_service - INFO -    대화 기록 포맷팅 완료
+2025-01-16 21:44:27 - shared_code.chat_service - INFO - 5. 최종 프롬프트 구성 중...
+2025-01-16 21:44:27 - shared_code.chat_service - INFO -    프롬프트 구성 완료
+2025-01-16 21:44:27 - shared_code.chat_service - INFO - 6. GPT 모델에 요청하여 응답 생성 중...
+2025-01-16 21:44:36 - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-01-16 21:44:36 - shared_code.chat_service - INFO -    응답 생성 완료
+2025-01-16 21:44:36 - shared_code.chat_service - INFO - ====== AI 응답 생성 완료 ======
+
+2025-01-16 21:53:27 - dotenv.main - INFO - Python-dotenv could not find configuration file .env.
+2025-01-16 21:53:27 - shared_code.config - INFO - Starting application initialization...
+2025-01-16 21:53:27 - shared_code.config - INFO - ## config_name : mongo_config.json
+2025-01-16 21:53:27 - shared_code.config - INFO - ## db : mongodb
+2025-01-16 21:53:27 - shared_code.config - INFO - ## db_name : HelloWorld-AI
+2025-01-16 21:53:27 - shared_code.chat_service - INFO - Starting database initialization...
+2025-01-16 21:53:27 - shared_code.chat_service - INFO - Database initialized successfully.
+2025-01-16 21:53:27 - azure_functions_worker - INFO - Indexed function app and found 2 functions
+2025-01-16 21:53:27 - azure_functions_worker - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2025-01-16 21:53:28 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID c1939f1a-8669-4855-814a-6690571e1fbf, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:53:28 - azure_functions_worker - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: C:\Users\ohmyh\AppData\Roaming\npm\node_modules\azure-functions-core-tools\bin\workers\python\3.9\WINDOWS\X64\azure\functions\__init__.py
+2025-01-16 21:53:28 - azure_functions_worker - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2025-01-16 21:53:28 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: c1939f1a-8669-4855-814a-6690571e1fbf, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2025-01-16 21:53:28 - azure_functions_worker - INFO - Received WorkerLoadRequest, request ID c1939f1a-8669-4855-814a-6690571e1fbf, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : C:\Users\ohmyh\OneDrive\바탕 화면\GitHub\HelloWorld_AI_Personal\Azure
+2025-01-16 21:53:28 - azure_functions_worker - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2025-01-16 21:53:28 - azure_functions_worker - INFO - Successfully processed FunctionLoadRequest, request ID: c1939f1a-8669-4855-814a-6690571e1fbf, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
