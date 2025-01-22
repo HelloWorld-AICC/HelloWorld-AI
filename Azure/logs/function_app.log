@@ -1,0 +1,73 @@
+2024-12-09 22:38:35,358 - INFO - Starting application initialization...
+2024-12-09 22:38:35,358 - INFO - Config file loaded
+2024-12-09 22:38:35,358 - INFO - Starting database initialization...
+2024-12-09 22:38:35,527 - INFO - Database & Model initialized successfully.
+2024-12-09 22:38:35,528 - INFO - Indexed function app and found 2 functions
+2024-12-09 22:38:35,528 - INFO - Successfully processed FunctionMetadataRequest for functions: Function Name: question, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', '')] Function Name: get_echo_call, Function Binding: [('httpTrigger', 'req', ''), ('http', '$return', ''), ('httpTrigger', 'req', ''), ('http', '$return', '')]. Deferred bindings enabled: False.
+2024-12-09 22:38:35,944 - INFO - Received WorkerLoadRequest, request ID 5a802050-ef57-407f-b868-fa812fb61feb, function_id: e551af1c-f167-5494-b1ef-26ea9cd77019,function_name: get_echo_call, function_app_directory : /Users/hwang-yewon/HelloWorld-AI/Azure
+2024-12-09 22:38:35,945 - INFO - Python Worker Extension is enabled in azure.functions (1.21.0b2). Sdk path: /opt/homebrew/Cellar/azure-functions-core-tools@4/4.0.6610/workers/python/3.9/OSX/Arm64/azure/functions/__init__.py
+2024-12-09 22:38:35,945 - INFO - Python Worker Extension Manager is loading get_echo_call, current registered extensions: {}
+2024-12-09 22:38:35,945 - INFO - Successfully processed FunctionLoadRequest, request ID: 5a802050-ef57-407f-b868-fa812fb61feb, function ID: e551af1c-f167-5494-b1ef-26ea9cd77019,function Name: get_echo_call,programming model: V2
+2024-12-09 22:38:35,945 - INFO - Received WorkerLoadRequest, request ID 5a802050-ef57-407f-b868-fa812fb61feb, function_id: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function_name: question, function_app_directory : /Users/hwang-yewon/HelloWorld-AI/Azure
+2024-12-09 22:38:35,945 - INFO - Python Worker Extension Manager is loading question, current registered extensions: {}
+2024-12-09 22:38:35,946 - INFO - Successfully processed FunctionLoadRequest, request ID: 5a802050-ef57-407f-b868-fa812fb61feb, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0,function Name: question,programming model: V2
+2024-12-09 22:39:16,643 - INFO - Received FunctionInvocationRequest, request ID: 5a802050-ef57-407f-b868-fa812fb61feb, function ID: 43ccfcc6-0c09-58e8-9dfb-7e4a49630dc0, function name: question, invocation ID: 7b84f099-a7a9-48d8-bddb-422c3763d1d1, function type: sync, timestamp (UTC): 2024-12-09 13:39:16.642171, sync threadpool max workers: 1000
+2024-12-09 22:39:16,646 - INFO - Question function triggered.
+2024-12-09 22:39:16,647 - INFO - Extracted user query: 안녕하세요, 저는 한국인 남편과 결혼한 미국인 가정주부입니다. 작년에 임신을 한 후로 남편이 폭언과 위협을 가하며 물리적으로 폭력을 가하기 시작했습니다. 어떻게 해야 하나요?
+2024-12-09 22:39:16,647 - INFO - First user query detected: 안녕하세요, 저는 한국인 남편과 결혼한 미국인 가정주부입니다. 작년에 임신을 한 후로 남편이 폭언과 위협을 가하며 물리적으로 폭력을 가하기 시작했습니다. 어떻게 해야 하나요?
+2024-12-09 22:39:16,647 - INFO - Generating embedding for query: 안녕하세요, 저는 한국인 남편과 결혼한 미국인 가정주부입니다. 작년에 임신을 한 후로 남편이 폭언과 위협을 가하며 물리적으로 폭력을 가하기 시작했습니다. 어떻게 해야 하나요?
+2024-12-09 22:39:17,675 - INFO - HTTP Request: POST https://api.openai.com/v1/embeddings "HTTP/1.1 200 OK"
+2024-12-09 22:39:17,973 - INFO - === 유사 문서 검색 결과 ===
+2024-12-09 22:39:17,973 - INFO - [유사 문서 1]
+2024-12-09 22:39:17,973 - INFO - 유사도 점수: 0.7612659931182861
+2024-12-09 22:39:17,973 - INFO - 거주지역: 안산시
+2024-12-09 22:39:17,974 - INFO - 국적: 기타
+2024-12-09 22:39:17,974 - INFO - 체류자격: F-1
+2024-12-09 22:39:17,974 - INFO - 추가정보: 
+최근 입국
+슬라브계 여성
+F-1 비자 소지자
+미성년 자녀 3명 양육 중
+경제활동이 어려움
+남편의 폭력으로 접근금지 명령
+
+2024-12-09 22:39:17,974 - INFO - 해결방법: 
+
+남편의 폭력 신고 후 접근금지 명령을 받았고, (사)너머 지원단체의 도움을 통해 생필품, 유아용품, 긴급의료비 및 월세를 지원받았습니다. 적십자사로부터 긴급의료비도 지원받아 치료를 완료했고, 현재 아르바이트를 시작하여 일부 경제활동을 하며 밀린 공과금을 납부했습니다. 아동보호전문기관의 사례관리 상담을 받으며 자녀들의 상태를 점검하고, 통역 및 자녀 교육 지침도 지원되었습니다. 내국인들의 지원으로 시급한 문제들은 해결되었으나 향후 자녀 양육비와 함께 한국에서의 자립을 위한 지속적인 지원과 관심이 필요한 상황입니다.
+...
+2024-12-09 22:39:17,974 - INFO - [유사 문서 2]
+2024-12-09 22:39:17,974 - INFO - 유사도 점수: 0.7433449029922485
+2024-12-09 22:39:17,974 - INFO - 거주지역: 남양주시
+2024-12-09 22:39:17,974 - INFO - 국적: 베트남
+2024-12-09 22:39:17,975 - INFO - 체류자격: F-6
+2024-12-09 22:39:17,975 - INFO - 추가정보: 
+- 국내 체류 중이며 귀화한 베트남 출신 결혼 이주 여성
+- 이혼한 전남편과 함께 사는 고등학생 아들이 학교폭력 피해
+- 아들이 학교폭력으로 인해 관할 교육지원청의 학교폭력대책심의위원회 앞둔 상황
+- 학교폭력 사안 조사를 위한 '보호자 확인서' 대필이 필요한 상황
+
+2024-12-09 22:39:17,975 - INFO - 해결방법: 
+
+
+- 피해 당사자인 자녀와 직접 소통하고 가정방문을 통해 어머니와 자녀의 상황을 청취함
+- 보호자 확인서를 대필 작성하여 보호자에게 설명 후 서명하게 함
+- 학교폭력대책심의위원회 참석에 필요한 진술 내용 등을 사전에 재확인하여 준비함
+- 학폭위 이후 조치에 따라 수용 또는 불복 가능함을 안내함
+...
+2024-12-09 22:39:17,975 - INFO - [유사 문서 3]
+2024-12-09 22:39:17,975 - INFO - 유사도 점수: 0.7361633777618408
+2024-12-09 22:39:17,975 - INFO - 거주지역: 남양주시
+2024-12-09 22:39:17,975 - INFO - 국적: 기타
+2024-12-09 22:39:17,975 - INFO - 체류자격: G-1
+2024-12-09 22:39:17,976 - INFO - 추가정보: 
+약 1년간 국내 거주 중인 인도국적 임산부
+임신 5개월차 초산
+남편은 인근 공장에서 일하며 일당으로 생계 유지
+건강보험 미가입으로 의료비 부담
+부부 모두 한국어 소통이 거의 안 됨
+부부가 지인 집에 동거 중
+
+2024-12-09 22:39:17,976 - INFO - 해결방법: 
+
+인근 국민건강보험센터를 통해 건강보험 가입 자격 확인 후, 출산을 위한 의료비 지원 제도가 없어 안정적인 일자리 찾기로 함. 보건소를 방문하여 산모 등록 후 필요한 물품을 지원받았으며, 산부인과 동행하여 건강보험 비적용 하에 필수 검사만 진행하도록 협조 요청. 산모 수첩의 잘못된 정보를 바로잡고 추가 소통을 영어로 가능하도록 안내. 현재 부부는 지인집에 임시 거주 중이며, 생활에 필요한 물품을 지원함. 무료 한국어 교실에 등록해 한국어 학습을 권유하며 지속적으로 사례 관리 진행함....
+2024-12-09 22:39:24,040 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
