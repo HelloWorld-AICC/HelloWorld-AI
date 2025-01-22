@@ -7,9 +7,9 @@ flask
 flask-cors
 numpy<2.0.0
 langchain-openai==0.3.0
-langchain-core==0.3.29
+langchain-core==0.3.29  
 langchain-mongodb==0.4.0
-langchain_elasticsearch==0.3.0
+langchain-elasticsearch==0.3.0
 elasticsearch
 python-dotenv
 transformers

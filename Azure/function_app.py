@@ -2,7 +2,6 @@ import azure.functions as func
 import logging
 import json
 import os
-from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
@@ -10,11 +9,14 @@ from pymongo import MongoClient
 
 app = func.FunctionApp()
 
-load_dotenv(verbose=True)
-
 class ChatService:
     """
-    핵심 AI 채팅 서비스를 구현한 클래스입니다.
+    설명:
+        핵심 AI 채팅 서비스를 구현한 클래스입니다.
+
+    메인 기능:
+        1. config, db, prompt 초기화
+        2. 사용자 질문에 대한 AI 응답 생성
     """
 
     def __init__(self):
@@ -145,11 +147,17 @@ class ChatService:
             total_context = ""
             for idx, result in enumerate(results_list,1):
                 context = f"""
+
                 관련 사례{idx} (출처: {result.get('url', 'N/A')}):
                 제목: {result.get('title', 'N/A')}
                 내용: {result.get('contents', 'N/A')}
+
                 """
-                logging.info(f"\n\n{context}\n\n")
+
+                logging.info(f"\n=== 검색된 문서 {idx} ===")
+                logging.info(f"제목: {result.get('title', 'N/A')}")
+                logging.info(f"유사도 점수: {result.get('score', 'N/A')}")
+                logging.info(f"URL: {result.get('url', 'N/A')}\n")
                 total_context += context
 
         return total_context
@@ -266,6 +274,8 @@ class ChatService:
         except Exception as e:
             logging.error(f"Error in generate_ai_response: {str(e)}")
             raise
+
+
 
 # 전역 변수 선언
 chat_service = None
