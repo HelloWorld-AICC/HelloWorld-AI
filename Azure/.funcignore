@@ -1,0 +1,7 @@
+.git*
+.vscode
+local.settings.json
+test
+.venv
+__pycache__
+# configs/ 폴더가 제외되지 않도록 주의
