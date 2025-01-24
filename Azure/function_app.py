@@ -1,14 +1,12 @@
 import azure.functions as func
 import logging
 import json
-import sys,os
+import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
 from pymongo import MongoClient
-from model import ChatModel
-import certifi
 
 app = func.FunctionApp()
 
@@ -343,6 +341,152 @@ def question(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(f"An error occurred: {str(e)}", status_code=500)
 
 
+
+# 이력서 생성
+@app.route(route="cv_generation", auth_level=func.AuthLevel.ANONYMOUS)
+def cv_generation(req: func.HttpRequest) -> func.HttpResponse:
+    """
+    이력서 생성 요청을 처리하는 엔드포인트입니다.
+    
+    Parameters:
+        req (func.HttpRequest): HTTP 요청 객체로, JSON 형식의 이력서 정보를 포함
+        
+        예시 JSON 형식:
+        {
+            "personal": {
+                "name": "홍길동",
+                "nationality": "베트남",
+                "visa": "E-7"
+            },
+            "experience": [
+                {"work": "업무 내용1"},
+                {"work": "업무 내용2"},
+                {"work": "업무 내용3"}
+            ],
+            "language": {
+                "korean": "상",
+                "others": [
+                    {"name": "영어", "level": "중"},
+                    {"name": "베트남어", "level": "상"}
+                ]
+            },
+            "skills": ["Excel", "Pandas"],
+            "strengths": ["성실함", "밝음"],
+            "desired_position": "데이터 분석가"
+        }
+
+    Returns:
+        func.HttpResponse: 생성된 이력서를 JSON 형식으로 반환
+        성공 시: {"resume": {"introduction": "한줄소개", "details": "상세소개"}} (200 OK)
+        실패 시: 에러 메시지와 함께 적절한 HTTP 상태 코드
+    """
+    
+    logging.info("CV Generation function triggered.")
+
+    # OpenAI API 키 환경변수 설정
+    os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_KEY")
+    
+    try:
+        # 요청 본문에서 JSON 데이터 가져오기
+        req_body = req.get_json()
+        
+        # 필수 필드 검증
+        if not all(field in req_body for field in ['personal', 'experience', 'language']):
+            return func.HttpResponse("Missing required fields", status_code=400)
+        
+        # 시스템 프롬프트
+        system_prompt = """
+        당신은 자기 소개서 작성을 돕는 전문 컨설턴트입니다.
+        사용자가 입력한 <사용자정보>를 읽은 후, 사용자의 장점을 효과적으로 드러낼 수 있는 <자기소개문장>, <상세소개서>를 작성해주세요.
+
+        [지시사항]
+        - 문장은 짧고 간결하게 작성하세요.
+        - 전체 글 내용의 통일성을 고려해주세요.
+        - **직무에 맞춰 사용자의 장점이 최대한 드러날 수 있게**, <사용자정보>를 잘 읽고 작성해주세요.
+        - **[근무경험]의 내용이 외국어로 작성되어 있는 경우, 한국어로 번역합니다.**
+        - <상세소개서>는 500자 미만으로 작성합니다.
+        - 주어진 출력 예시와 동일한 형식으로 출력해주세요.
+        - <자기소개문장>은 한 문장으로 명료하게 제시합니다.
+        - <상세소개서>는 <자기소개문장>과 잘 이어지게끔, [희망직무]와 관련이 있는 사용자의 <업무스킬>, <강점>, <직무경험>을 바탕으로 상세하게 기술합니다.
+        - [희망직무]가 주어지지 않은 경우, 사용자의 [강점]을 최대한 살려서 작성해주세요.
+        
+        
+        [예시]
+        - 전체 출력 예시는 다음과 같습니다.
+            <자기소개문장>기술로 한 걸음 더 나은 내일을 꿈꾸는 개발자, 황예원입니다.</자기소개문장>
+            <상세소개서>저는 OO한 경험이 있으며, OO한 장점을 지녔습니다. 또한, ...</상세소개서>
+        """
+
+        # 사용자 정보 포맷팅
+        foreign_languages = "\n\t".join([f"{lang['name']}: {lang['level']}" for lang in req_body['language']['others']])
+        
+        # 근무경험 포맷팅 추가
+        experiences = "\n".join([f"- {exp['work']}" for exp in req_body['experience']])
+        
+        user_prompt = f"""
+        [인적사항]
+        - 이름: {req_body['personal']['name']}
+        - 국적: {req_body['personal']['nationality']}
+        - 비자: {req_body['personal']['visa']}
+
+        [근무경험]
+        {experiences}
+
+        [언어]
+        - 한국어 수준: {req_body['language']['korean']}
+        - 기타 외국어 수준
+            {foreign_languages}
+
+        [업무스킬]
+        {', '.join(req_body['skills'])}
+
+        [강점]
+        {', '.join(req_body['strengths'])}
+
+        [희망직무]
+        {req_body.get('desired_position', '상관없음')}
+        """
+        
+        # ChatGPT API 호출
+        llm = ChatOpenAI(
+            model="gpt-4o-mini",
+            temperature=0.7
+        )
+        
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+        
+        response = llm.invoke(input=messages)
+        
+        # 응답 파싱
+        content = response.content
+        intro_start = content.find("<자기소개문장>") + len("<자기소개문장>")
+        intro_end = content.find("</자기소개문장>")
+        details_start = content.find("<상세소개서>") + len("<상세소개서>")
+        details_end = content.find("</상세소개서>")
+        
+        introduction = content[intro_start:intro_end].strip()
+        details = content[details_start:details_end].strip()
+        
+        return func.HttpResponse(
+            json.dumps({
+                "resume": {
+                    "introduction": introduction,
+                    "details": details
+                }
+            }, ensure_ascii=False),
+            mimetype="application/json"
+        )
+        
+    except Exception as e:
+        logging.error(f"Error generating CV: {str(e)}")
+        return func.HttpResponse(f"An error occurred: {str(e)}", status_code=500)
+
+
+
+# 테스트 엔드포인트
 @app.route(route="get_test/{param}", auth_level=func.AuthLevel.ANONYMOUS)
 def get_echo_call(req: func.HttpRequest) -> func.HttpResponse:
     """
