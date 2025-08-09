@@ -1,10 +1,24 @@
-<<<<<<< HEAD
 # Hello World
 안녕하세요! 저희는 외국인 노동자를 위한 지원센터 AICC 어플을 개발하는 "끝까지 간다" 팀입니다😄
 
 [AI 개발 레포](https://github.com/yeowonh/HelloWorld-AI)
 
 [서버 레포](https://github.com/HelloWorld-AICC/HelloWorld-Server) | [프론트 레포](https://github.com/HelloWorld-AICC/HelloWorld-Front)
+
+## 환경 세팅
+- .venv (uv)로 환경 관리
+    - CUDA 자동 세팅 (없을 경우 skip)
+    -
+```python
+bash init.sh
+```
+
+- 커밋 방식
+    - git add {스테이징할 폴더/파일}
+    - git commit
+- commit 시 pre-hook 동작 후 자동으로 fix됨 (다시 git add 필요)
+- commit 이후에는 새 코드창이 열림 -> commit template에 맞춰서 커밋 진행
+
 
 ## 💡 개발 동기
 
@@ -47,17 +61,3 @@ LG U+나 쿠쿠와 같은 대기업의 사례를 보면 AICC의 도입으로 재
 
 ## ⚙️ AI
 ![Group 28](https://github.com/user-attachments/assets/b63defe3-217a-464b-87fc-18001aaa5692)
-
-
-
-
-
-=======
-# HelloWorld_AI_Personal
-HelloWorld 개발 레포지토리(개인)
-
-
-1. HelloWorld organaization에서 클론
-2. HelloWorld_AI_Personal 레포에서 개발
-3. 완료 후 HelloWorld organaization-develop에 푸시
->>>>>>> 5af2708556ed220541b47226bedeee8d1dbf3524
