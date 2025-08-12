@@ -19,12 +19,11 @@
         "max_tokens" : 4096,
         "temperature" : 0
     },
-    
-    "path": {
-        "data_file_name": "data/batch_jsonl/output/jisikin_consultation_2020_2024_batch.jsonl",
+
+    "path" : {
+        "data_file_name": "data/postprocessed_data/industrial_accident.json",
         "db_name": "HelloWorld-AI",
         "collection_name": "foreigner_legalQA_v2",
         "index_name" : "vector_index"
     }
-
 }

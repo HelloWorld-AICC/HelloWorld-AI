@@ -107,16 +107,6 @@ ensure_uv() {
   color green "uv 설치 완료"
 }
 
-install_requirements_with_uv() {
-  local req_file="requirements.txt"
-  if [ -f "${req_file}" ]; then
-    color blue "uv로 ${req_file} 설치 중..."
-    uv pip install -r "${req_file}"
-    color green "요구사항 설치 완료"
-  else
-    color yellow "${req_file} 파일이 없어 설치를 스킵합니다."
-  fi
-}
 
 # ---------- 0. .venv 세팅 후 venv 활성화 ----------
 if [ ! -d ".venv" ]; then
@@ -142,7 +132,33 @@ setup_cuda_env
 
 # ---------- 2. uv 설치 및 requirements 설치 ----------
 ensure_uv
-install_requirements_with_uv
+
+# uv sync (pyproject 기반 설치). uv.lock이 있으면 --frozen 사용
+if [ -f "pyproject.toml" ]; then
+  color blue "uv sync 실행 중..."
+  if [ -f "uv.lock" ]; then
+    uv sync --frozen || {
+      color red "uv sync(--frozen) 실패";
+      exit 1
+    }
+  else
+    uv sync || {
+      color red "uv sync 실패";
+      exit 1
+    }
+  fi
+  color green "uv sync 완료"
+else
+  # pyproject가 없으면 requirements.txt로 설치
+  if [ -f "requirements.txt" ]; then
+    color blue "requirements.txt 기반 설치 진행 (uv pip)"
+    uv pip install -r requirements.txt || {
+      color red "requirements 설치 실패";
+      exit 1
+    }
+    color green "requirements 설치 완료"
+  fi
+fi
 
 # ---------- 3. 기존 설정 유지: git / pre-commit ----------
 # git 설정
@@ -151,7 +167,26 @@ git config --global core.editor "code --wait" || true
 color blue "Fin git config"
 
 # pre-commit 설정
-pip install -U pre-commit >/dev/null 2>&1 || true
-pre-commit autoupdate || true
-pre-commit install || true
-color blue "Fin pre-commit"
+# 1) pip 최신화 및 설치 시도 (uv가 있으면 uv 우선)
+python -m pip install --upgrade pip setuptools wheel >/dev/null 2>&1 || true
+if command -v uv >/dev/null 2>&1; then
+  uv pip install -U pre-commit >/dev/null 2>&1 || true
+else
+  python -m pip install -U pre-commit >/dev/null 2>&1 || true
+fi
+
+# 2) 설치 검증 후만 실행
+if python - <<'PY'
+import sys
+try:
+    import pre_commit  # noqa: F401
+except Exception:
+    sys.exit(1)
+PY
+then
+  python -m pre_commit autoupdate || true
+  python -m pre_commit install || true
+  color blue "Fin pre-commit"
+else
+  color yellow "pre-commit 설치를 확인하지 못했습니다. pre-commit 단계를 건너뜁니다."
+fi

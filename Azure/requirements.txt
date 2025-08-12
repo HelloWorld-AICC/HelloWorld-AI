@@ -13,5 +13,4 @@ langchain_elasticsearch==0.3.0
 elasticsearch
 python-dotenv
 transformers
-certifi
 pymongo==4.10.1
