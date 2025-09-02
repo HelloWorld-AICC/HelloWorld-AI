@@ -1,0 +1,17 @@
+# Prefect 기반 데이터 크롤링 시스템 의존성
+prefect>=2.0.0
+requests>=2.28.0
+beautifulsoup4>=4.11.0
+pandas>=1.5.0
+lxml>=4.9.0
+
+# 선택적 의존성 (고급 기능용)
+# selenium>=4.0.0  # JavaScript 렌더링이 필요한 경우
+# scrapy>=2.5.0    # 대용량 크롤링이 필요한 경우
+# aiohttp>=3.8.0   # 비동기 HTTP 클라이언트
+# pymongo>=4.0.0   # MongoDB 저장 (기존 코드 활용)
+
+# 개발 도구
+pytest>=7.0.0
+black>=22.0.0
+flake8>=5.0.0

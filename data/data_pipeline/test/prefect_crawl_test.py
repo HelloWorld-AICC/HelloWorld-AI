@@ -11,6 +11,7 @@ from prefect import flow, task, get_run_logger
 # --------- 기존 코드(핵심) 재사용: clean_text / parse_faq / fetch ---------
 TARGET_URL = "http://hugkorea.or.kr/board/bbs_list.php?code=faq"
 
+
 def clean_text(html_fragment: Union[Tag, str]) -> str:
     """<br> -> \n, &nbsp; 제거, 공백 정리."""
     if isinstance(html_fragment, Tag):
@@ -25,6 +26,7 @@ def clean_text(html_fragment: Union[Tag, str]) -> str:
     text = re.sub(r"\n\s*\n\s*", "\n\n", text).strip()
     return text
 
+
 def parse_faq(html: str, page_url: str) -> List[Dict]:
     soup = BeautifulSoup(html, "html.parser")
     faq_root = soup.select_one(".faq") or soup
@@ -35,17 +37,16 @@ def parse_faq(html: str, page_url: str) -> List[Dict]:
             question = clean_text(q_span_list[1])
         else:
             question = clean_text(trig)
-        acc = trig.find_next_sibling(lambda tag: tag.name == "div" and "accordion" in tag.get("class", []))
+        acc = trig.find_next_sibling(
+            lambda tag: tag.name == "div" and "accordion" in tag.get("class", [])
+        )
         if not acc:
             continue
         ans_div = acc.find("div") or acc
         answer = clean_text(ans_div)
-        items.append({
-            "title": question,
-            "contents": answer,
-            "url": page_url
-        })
+        items.append({"title": question, "contents": answer, "url": page_url})
     return items
+
 
 def fetch(url: str) -> str:
     headers = {"User-Agent": "Mozilla/5.0 (compatible; FAQCrawler/1.0)"}
@@ -54,6 +55,7 @@ def fetch(url: str) -> str:
     resp.encoding = resp.apparent_encoding or "utf-8"
     return resp.text
 
+
 # ----------------- Prefect 태스크 -----------------
 @task(retries=2, retry_delay_seconds=10)
 def crawl(url: str) -> List[Dict]:
@@ -61,8 +63,10 @@ def crawl(url: str) -> List[Dict]:
     data = parse_faq(html, url)
     return data
 
+
 def _fingerprint(title: str, contents: str) -> str:
     return hashlib.sha256((title + contents).encode("utf-8")).hexdigest()
+
 
 @task
 def clean(records: List[Dict]) -> List[Dict]:
@@ -70,7 +74,7 @@ def clean(records: List[Dict]) -> List[Dict]:
     seen = set()
     out = []
     for r in records:
-        fp = _fingerprint(r.get("title",""), r.get("contents",""))
+        fp = _fingerprint(r.get("title", ""), r.get("contents", ""))
         if fp in seen:
             continue
         seen.add(fp)
@@ -78,11 +82,13 @@ def clean(records: List[Dict]) -> List[Dict]:
         out.append({**r, "fingerprint": fp, "fetched_at": int(time.time())})
     return out
 
+
 @task
 def save_json(records: List[Dict], output_path: str) -> str:
     path = Path(output_path)
     path.write_text(json.dumps(records, ensure_ascii=False, indent=2), encoding="utf-8")
     return str(path.resolve())
+
 
 # ----------------- Prefect 플로우 -----------------
 @flow(name="hug-faq-crawl-weekly")
@@ -93,6 +99,7 @@ def main(url: str = TARGET_URL, output_path: str = "hug_faq.json") -> str:
     out_path = save_json(cleaned, output_path)
     log.info(f"Saved {len(cleaned)} items -> {out_path}")
     return out_path
+
 
 if __name__ == "__main__":
     # 로컬 단독 실행 테스트
