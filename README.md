@@ -36,6 +36,8 @@ bash init.sh
 ├── data
 │   ├── BatchClient.py // (BatchClient) MongoDB 적재용 상담 내역 요약 생성 및 jsonl 결과물 산출
 │   ├── crawler.ipynb // 크롤링 파일
+│   ├── helloworld_test_query.csv // 테스트 쿼리
+│   ├── helloworld_test_query_with_translation_20250910_010300.csv // gpt 번역 & 키워드 추출 결과 파일
 │   ├── make_mongodb.py // 후처리된 json, jsonl -> MongoDB atlas 적재
 │   ├── notebooks
 │   │   ├── 외부데이터_데이터셋구축.ipynb // (BatchClient) 지식인, 법률 공단 외 기타 웹사이트 데이터 정제
@@ -184,10 +186,11 @@ bash init.sh
 │   │   ├── chat_template.txt
 │   │   └── resume_template.txt
 │   └── utils.py
-├── prompts // 프롬프트 저장
-│   ├── cv_prompt.json
-│   ├── generate_data_prompt_info_only.json
-│   └── generate_data_prompt.json
+├── notebooks // 실험용 ipynb 파일
+│   ├── gpt_call.ipynb
+│   └── hybrid_search_test.ipynb
+├── prompts
+│   └── prompts.py // 이전 프롬프트 하나로 합체
 ├── pyproject.toml // uv (.venv) 용 버전관리
 ├── README.md
 ├── test // 간단한 모듈 테스트용 파일
