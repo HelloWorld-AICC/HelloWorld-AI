@@ -6,13 +6,14 @@ from typing import List, Dict, Any
 from prefect import flow, get_run_logger
 from datetime import datetime
 
-from ..crawlers.hug_faq_crawler import HugFaqCrawler
-from ..processors.text_cleaner import clean_text_batch
-from ..processors.deduplicator import (
-    remove_duplicates_by_fingerprint,
-    generate_fingerprints,
-)
-from ..storage.local_storage import save_multiple_formats
+from crawlers.hug_faq_crawler import HugFaqCrawler
+from crawlers.industrial_accident_act_crawler import IndustrialAccidentActCrawler
+from crawlers.labor_standards_act_crawler import LaborStandardsActCrawler
+from crawlers.minimum_wage_act_crawler import MinimumWageActCrawler
+from crawlers.wage_claim_guarantee_act_crawler import WageClaimGuaranteeActCrawler
+from processors.text_cleaner import clean_text_batch
+from processors.deduplicator import remove_duplicates_by_fingerprint
+from storage.local_storage import save_multiple_formats
 
 
 @flow(name="single-site-crawl", description="단일 사이트 크롤링 및 데이터 처리")
@@ -44,6 +45,14 @@ def crawl_single_site(
         # 1. 크롤러 초기화 및 실행
         if site_name == "hug_faq":
             crawler = HugFaqCrawler()
+        elif site_name == "law_industrial_accident":
+            crawler = IndustrialAccidentActCrawler()
+        elif site_name == "law_labor_standards":
+            crawler = LaborStandardsActCrawler()
+        elif site_name == "law_minimum_wage":
+            crawler = MinimumWageActCrawler()
+        elif site_name == "law_wage_claim_guarantee":
+            crawler = WageClaimGuaranteeActCrawler()
         else:
             raise ValueError(f"Unsupported site: {site_name}")
 

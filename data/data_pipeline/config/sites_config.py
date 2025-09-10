@@ -39,7 +39,6 @@ class SiteConfig:
     crawler_class: str
     enabled: bool = True
     crawl_interval_days: int = 30  # 한달에 한번 크롤링
-    max_pages: int = 100
     user_agent: str = None
     headers: Dict[str, str] = None
     delay_seconds: float = 1.0
@@ -55,7 +54,6 @@ SITES_CONFIG = {
         crawler_class="HugFaqCrawler",
         enabled=True,
         crawl_interval_days=30,  # 한달에 한번 크롤링
-        max_pages=50,  # FAQ 게시판은 페이지 수가 많지 않음
         delay_seconds=1.0,  # 서버 부하 방지를 위한 1초 지연
         user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
     ),
@@ -66,7 +64,6 @@ SITES_CONFIG = {
         crawler_class="SiteACrawler",
         enabled=False,  # 아직 구현되지 않음
         crawl_interval_days=30,  # 한달에 한번 크롤링
-        max_pages=100,
     ),
     "site_b": SiteConfig(
         name="site_b",
@@ -74,7 +71,35 @@ SITES_CONFIG = {
         crawler_class="SiteBCrawler",
         enabled=False,  # 아직 구현되지 않음
         crawl_interval_days=30,  # 한달에 한번 크롤링
-        max_pages=100,
+    ),
+    # 법령 사이트들 (크롤러는 미구현 상태로 비활성화 등록)
+    "law_industrial_accident": SiteConfig(
+        name="law_industrial_accident",
+        base_url="https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%82%B0%EC%97%85%EC%9E%AC%ED%95%B4%EB%B3%B4%EC%83%81%EB%B3%B4%ED%97%98%EB%B2%95",
+        crawler_class="IndustrialAccidentActCrawler",
+        enabled=True,
+        crawl_interval_days=30,
+    ),
+    "law_labor_standards": SiteConfig(
+        name="law_labor_standards",
+        base_url="https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EA%B7%BC%EB%A1%9C%EA%B8%B0%EC%A4%80%EB%B2%95",
+        crawler_class="LaborStandardsActCrawler",
+        enabled=True,
+        crawl_interval_days=30,
+    ),
+    "law_minimum_wage": SiteConfig(
+        name="law_minimum_wage",
+        base_url="https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%B5%9C%EC%A0%80%EC%9E%84%EA%B8%88%EB%B2%95",
+        crawler_class="MinimumWageActCrawler",
+        enabled=True,
+        crawl_interval_days=30,
+    ),
+    "law_wage_claim_guarantee": SiteConfig(
+        name="law_wage_claim_guarantee",
+        base_url="https://www.law.go.kr/%EB%B2%95%EB%A0%B9/%EC%9E%84%EA%B8%88%EC%B1%84%EA%B6%8C%EB%B3%B4%EC%9E%A5%EB%B2%95",
+        crawler_class="WageClaimGuaranteeActCrawler",
+        enabled=True,
+        crawl_interval_days=30,
     ),
 }
 

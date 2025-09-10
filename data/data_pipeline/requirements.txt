@@ -6,7 +6,9 @@ pandas>=1.5.0
 lxml>=4.9.0
 
 # 선택적 의존성 (고급 기능용)
-# selenium>=4.0.0  # JavaScript 렌더링이 필요한 경우
+playwright>=1.40.0  # JavaScript 렌더링 (주요)
+selenium>=4.10.0  # JavaScript 렌더링 폴백
+requests-html>=0.10.0  # JavaScript 렌더링 대안
 # scrapy>=2.5.0    # 대용량 크롤링이 필요한 경우
 # aiohttp>=3.8.0   # 비동기 HTTP 클라이언트
 # pymongo>=4.0.0   # MongoDB 저장 (기존 코드 활용)
