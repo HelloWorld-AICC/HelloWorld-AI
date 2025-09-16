@@ -12,6 +12,7 @@ app = func.FunctionApp()
 
 load_dotenv(verbose=True)
 
+
 class ChatService:
     """
     핵심 AI 채팅 서비스를 구현한 클래스입니다.
@@ -37,8 +38,8 @@ class ChatService:
         logging.info("====== Application initialization started ======")
 
         # Config 파일 로드
-        CONFIG_NAME = "mongo_config.json"    
-        with open(f'configs/{CONFIG_NAME}', 'r') as f:
+        CONFIG_NAME = "mongo_config.json"
+        with open(f"configs/{CONFIG_NAME}", "r") as f:
             self.config = json.load(f)
 
         # MongoDB 클러스터 URI 환경변수 설정
@@ -58,8 +59,10 @@ class ChatService:
 
         try:
             client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"], ssl=True)
-            self.main_collection = client[self.config['path']['db_name']]['foreigner_legalQA_v2']
-            
+            self.main_collection = client[self.config["path"]["db_name"]][
+                "foreigner_legalQA_v2"
+            ]
+
             logging.info("database initialized successfully...(2/3)")
         except Exception as e:
             logging.error(f"Error loading database: {str(e)}")
@@ -71,7 +74,8 @@ class ChatService:
         AI 응답 생성에 사용될 프롬프트 템플릿을 초기화하는 함수입니다.
         """
 
-        self.CHAT_PROMPT_TEMPLATE = PromptTemplate.from_template("""
+        self.CHAT_PROMPT_TEMPLATE = PromptTemplate.from_template(
+            """
         당신은 한국의 외국인 근로자를 위한 법률 및 비자 전문 AI 어시스턴트입니다.
 
         참고 문서:
@@ -84,7 +88,8 @@ class ChatService:
         1. 구체적이고 실용적인 해결방안을 제시해주세요
         2. 이전 답변을 반복하지 마세요
         3. 친절하고 이해하기 쉬운 말로 설명해주세요
-        """)
+        """
+        )
 
         logging.info("prompt initialized successfully...(3/3)")
         logging.info("====== Application initialization completed ======")
@@ -93,36 +98,38 @@ class ChatService:
     def _perform_vector_search(self, query_embedding):
         """
         유저 쿼리와 유사한 문서를 검색하는 함수입니다.
-        
+
         Args:
             query_embedding (list): 사용자 질문의 벡터 임베딩 값
-        
+
         Returns:
-            list: 유사도가 높은 상위 3개 문서 목록을 반환합니다. 
+            list: 유사도가 높은 상위 3개 문서 목록을 반환합니다.
                 각 문서는 제목, 내용, URL, 유사도 점수를 포함한다.
         """
 
         # legal_QA 컬렉션용 Vector Search 쿼리
-        results = self.main_collection.aggregate([
-            {
-                "$vectorSearch": {
-                    "index": "vector_index",
-                    "path": "Embedding",
-                    "queryVector": query_embedding,
-                    "numCandidates": 100,
-                    "limit": 3
-                }
-            },
-            {
-                "$project": {
-                    "title": 1, #1은 포함한다는 의미
-                    "contents": 1,
-                    "url": 1,
-                    "score": { "$meta": "vectorSearchScore" },
-                    "_id": 0
-                }
-            }
-        ])
+        results = self.main_collection.aggregate(
+            [
+                {
+                    "$vectorSearch": {
+                        "index": "vector_index",
+                        "path": "Embedding",
+                        "queryVector": query_embedding,
+                        "numCandidates": 100,
+                        "limit": 3,
+                    }
+                },
+                {
+                    "$project": {
+                        "title": 1,  # 1은 포함한다는 의미
+                        "contents": 1,
+                        "url": 1,
+                        "score": {"$meta": "vectorSearchScore"},
+                        "_id": 0,
+                    }
+                },
+            ]
+        )
 
         return list(results)
 
@@ -133,7 +140,7 @@ class ChatService:
 
         Args:
             results_list (list): 유사 문서 목록
-        
+
         Returns:
             str: 포맷팅된 컨텍스트 문자열
                 유사 문서가 없을 경우 기본 안내 정보 변환
@@ -143,7 +150,7 @@ class ChatService:
             total_context = "일반적인 안내 정보..."
         else:
             total_context = ""
-            for idx, result in enumerate(results_list,1):
+            for idx, result in enumerate(results_list, 1):
                 context = f"""
                 관련 사례{idx} (출처: {result.get('url', 'N/A')}):
                 제목: {result.get('title', 'N/A')}
@@ -162,43 +169,44 @@ class ChatService:
         Args: conversation_history (list): 대화 기록 목록
             [{"speaker": "human/ai", "utterance": "대화내용"}, ...]
 
-        
+
         Returns:
             str: 포맷팅된 대화 기록 문자열
                 설정된 최대 대화 쌍 수 만큼만 포함
         """
 
         # 이전 대화 쌍 불러오기
-        max_pairs = self.config['chat_inference']['max_conversation_pairs']
-        max_messages = max_pairs*2
+        max_pairs = self.config["chat_inference"]["max_conversation_pairs"]
+        max_messages = max_pairs * 2
 
         # conversation 텍스트 생성
-        formatted_conversation = "\n".join([
-            f"{'사용자' if msg['speaker'] == 'human' else 'AI'}: {msg['utterance']}"
-            for msg in conversation_history[-max_messages:]
-        ])
+        formatted_conversation = "\n".join(
+            [
+                f"{'사용자' if msg['speaker'] == 'human' else 'AI'}: {msg['utterance']}"
+                for msg in conversation_history[-max_messages:]
+            ]
+        )
 
         return formatted_conversation
-
 
     # LLM 응답 생성 로직
     def _get_llm_response(self, prompt):
         """
         OpenAI GPT 모델을 사용하여 응답을 생성하는 함수입니다.
 
-        Args: 
+        Args:
             prompt (str): 컨텍스트와 대화 기록이 포함된 완성된 프롬프트
 
         Returns:
             dict: {"answer": "생성된 응답 텍스트"}
         """
-        
+
         llm = ChatOpenAI(
-            model= self.config['openai_chat_inference']['model'],
-            temperature= self.config['chat_inference']['temperature']
+            model=self.config["openai_chat_inference"]["model"],
+            temperature=self.config["chat_inference"]["temperature"],
         )
         output = llm.invoke(input=prompt)
-        
+
         return {"answer": output.content}
 
     # 메인 함수
@@ -227,20 +235,22 @@ class ChatService:
 
             # 임베딩 모델 초기화 및 쿼리 임베딩
             logging.info("1. 임베딩 모델 초기화 및 쿼리 벡터화 시작...")
-            embedding_model = OpenAIEmbeddings(model=self.config['openai_chat_inference']['embedding'])
+            embedding_model = OpenAIEmbeddings(
+                model=self.config["data_config"]["embedding_model"]
+            )
             query_embedding = embedding_model.embed_query(query)
             logging.info("   쿼리 벡터화 완료")
-            
+
             # 유사 문서 리스트 초기화
             logging.info("2. MongoDB에서 유사 문서 검색 시작...")
             results_list = self._perform_vector_search(query_embedding)
             logging.info(f"   검색된 유사 문서 수: {len(results_list)}개")
-            
+
             # context 초기화
             logging.info("3. 검색 결과로 컨텍스트 구성 중...")
             context = self._build_context(results_list)
             logging.info("   컨텍스트 구성 완료")
-            
+
             # 이전 대화 포멧 초기화
             logging.info("4. 이전 대화 기록 포맷팅 중...")
             formatted_conversation = self._format_conversation(conversation_history)
@@ -249,11 +259,10 @@ class ChatService:
             # 입력 프롬프트 초기화
             logging.info("5. 최종 프롬프트 구성 중...")
             filled_prompt = self.CHAT_PROMPT_TEMPLATE.format(
-                context=context,
-                conversation_history=formatted_conversation
+                context=context, conversation_history=formatted_conversation
             )
             logging.info("   프롬프트 구성 완료")
-            
+
             # llm 응답 반환
             logging.info("6. GPT 모델에 요청하여 응답 생성 중...")
             response = self._get_llm_response(filled_prompt)
@@ -261,22 +270,23 @@ class ChatService:
             logging.info("====== AI 응답 생성 완료 ======\n")
 
             return response
-            
-            
+
         except Exception as e:
             logging.error(f"Error in generate_ai_response: {str(e)}")
             raise
 
+
 # 전역 변수 선언
 chat_service = None
+
 
 # 사용자 요청 수신
 @app.route(route="question", auth_level=func.AuthLevel.ANONYMOUS)
 def question(req: func.HttpRequest) -> func.HttpResponse:
     """
-    이 함수는 HTTP POST 요청을 통해 사용자의 대화 내용을 받고, 
+    이 함수는 HTTP POST 요청을 통해 사용자의 대화 내용을 받고,
     AI 응답을 생성하는 엔드포인트입니다.
-    
+
     Parameters:
         req (func.HttpRequest): HTTP 요청 객체로, JSON 형식의 대화 내용을 포함한다.
 
@@ -306,20 +316,26 @@ def question(req: func.HttpRequest) -> func.HttpResponse:
 
     if not chat_service:
         chat_service = ChatService()
-    
+
     try:
         # 요청 본문에서 JSON 데이터를 가져오고, Conversation 필드를 추출
         req_body = req.get_json()
-        conversation = req_body.get('Conversation', [])
-        
+        conversation = req_body.get("Conversation", [])
+
         # Conversation이 없으면 오류 메시지를 반환
         if not conversation:
             return func.HttpResponse("No conversation data provided", status_code=400)
 
         # 마지막으로 입력된 사용자 발화를 추출
-        user_query = next((item['utterance'] for item in reversed(conversation) 
-                         if item['speaker'] == 'human'), None)
-        
+        user_query = next(
+            (
+                item["utterance"]
+                for item in reversed(conversation)
+                if item["speaker"] == "human"
+            ),
+            None,
+        )
+
         # 사용자 쿼리 검증
         if user_query is None:
             return func.HttpResponse("No user utterance found", status_code=400)
@@ -330,10 +346,8 @@ def question(req: func.HttpRequest) -> func.HttpResponse:
         # 응답에서 references 제외하고 answer만 반환
         # 클라이언트에게 답변 텍스트만 전달 된다.
         return func.HttpResponse(
-            json.dumps({
-                "answer": response["answer"]
-            }, ensure_ascii=False),
-            mimetype="application/json"
+            json.dumps({"answer": response["answer"]}, ensure_ascii=False),
+            mimetype="application/json",
         )
 
     except Exception as e:
@@ -341,16 +355,15 @@ def question(req: func.HttpRequest) -> func.HttpResponse:
         return func.HttpResponse(f"An error occurred: {str(e)}", status_code=500)
 
 
-
 # 이력서 생성
 @app.route(route="cv_generation", auth_level=func.AuthLevel.ANONYMOUS)
 def cv_generation(req: func.HttpRequest) -> func.HttpResponse:
     """
     이력서 생성 요청을 처리하는 엔드포인트입니다.
-    
+
     Parameters:
         req (func.HttpRequest): HTTP 요청 객체로, JSON 형식의 이력서 정보를 포함
-        
+
         예시 JSON 형식:
         {
             "personal": {
@@ -380,20 +393,22 @@ def cv_generation(req: func.HttpRequest) -> func.HttpResponse:
         성공 시: {"resume": {"introduction": "한줄소개", "details": "상세소개"}} (200 OK)
         실패 시: 에러 메시지와 함께 적절한 HTTP 상태 코드
     """
-    
+
     logging.info("CV Generation function triggered.")
 
     # OpenAI API 키 환경변수 설정
     os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_KEY")
-    
+
     try:
         # 요청 본문에서 JSON 데이터 가져오기
         req_body = req.get_json()
-        
+
         # 필수 필드 검증
-        if not all(field in req_body for field in ['personal', 'experience', 'language']):
+        if not all(
+            field in req_body for field in ["personal", "experience", "language"]
+        ):
             return func.HttpResponse("Missing required fields", status_code=400)
-        
+
         # 시스템 프롬프트
         system_prompt = """
         당신은 자기 소개서 작성을 돕는 전문 컨설턴트입니다.
@@ -409,8 +424,8 @@ def cv_generation(req: func.HttpRequest) -> func.HttpResponse:
         - <자기소개문장>은 한 문장으로 명료하게 제시합니다.
         - <상세소개서>는 <자기소개문장>과 잘 이어지게끔, [희망직무]와 관련이 있는 사용자의 <업무스킬>, <강점>, <직무경험>을 바탕으로 상세하게 기술합니다.
         - [희망직무]가 주어지지 않은 경우, 사용자의 [강점]을 최대한 살려서 작성해주세요.
-        
-        
+
+
         [예시]
         - 전체 출력 예시는 다음과 같습니다.
             <자기소개문장>기술로 한 걸음 더 나은 내일을 꿈꾸는 개발자, 황예원입니다.</자기소개문장>
@@ -418,11 +433,16 @@ def cv_generation(req: func.HttpRequest) -> func.HttpResponse:
         """
 
         # 사용자 정보 포맷팅
-        foreign_languages = "\n\t".join([f"{lang['name']}: {lang['level']}" for lang in req_body['language']['others']])
-        
+        foreign_languages = "\n\t".join(
+            [
+                f"{lang['name']}: {lang['level']}"
+                for lang in req_body["language"]["others"]
+            ]
+        )
+
         # 근무경험 포맷팅 추가
-        experiences = "\n".join([f"- {exp['work']}" for exp in req_body['experience']])
-        
+        experiences = "\n".join([f"- {exp['work']}" for exp in req_body["experience"]])
+
         user_prompt = f"""
         [인적사항]
         - 이름: {req_body['personal']['name']}
@@ -446,44 +466,38 @@ def cv_generation(req: func.HttpRequest) -> func.HttpResponse:
         [희망직무]
         {req_body.get('desired_position', '상관없음')}
         """
-        
+
         # ChatGPT API 호출
-        llm = ChatOpenAI(
-            model="gpt-4o-mini",
-            temperature=0.7
-        )
-        
+        llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.7)
+
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
+            {"role": "user", "content": user_prompt},
         ]
-        
+
         response = llm.invoke(input=messages)
-        
+
         # 응답 파싱
         content = response.content
         intro_start = content.find("<자기소개문장>") + len("<자기소개문장>")
         intro_end = content.find("</자기소개문장>")
         details_start = content.find("<상세소개서>") + len("<상세소개서>")
         details_end = content.find("</상세소개서>")
-        
+
         introduction = content[intro_start:intro_end].strip()
         details = content[details_start:details_end].strip()
-        
+
         return func.HttpResponse(
-            json.dumps({
-                "resume": {
-                    "introduction": introduction,
-                    "details": details
-                }
-            }, ensure_ascii=False),
-            mimetype="application/json"
+            json.dumps(
+                {"resume": {"introduction": introduction, "details": details}},
+                ensure_ascii=False,
+            ),
+            mimetype="application/json",
         )
-        
+
     except Exception as e:
         logging.error(f"Error generating CV: {str(e)}")
         return func.HttpResponse(f"An error occurred: {str(e)}", status_code=500)
-
 
 
 # 테스트 엔드포인트
@@ -491,14 +505,14 @@ def cv_generation(req: func.HttpRequest) -> func.HttpResponse:
 def get_echo_call(req: func.HttpRequest) -> func.HttpResponse:
     """
     테스트용 엔드포인트입니다.
-    
+
     Parameters:
         req (func.HttpRequest): HTTP 요청 객체
         param: URL 경로에서 추출할 파라미터
-        
+
     Returns:
         func.HttpResponse: 입력받은 파라미터를 그대로 반환
     """
 
-    param = req.route_params.get('param')
+    param = req.route_params.get("param")
     return func.HttpResponse(json.dumps({"param": param}), mimetype="application/json")
