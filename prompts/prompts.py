@@ -1,4 +1,4 @@
-TRANSLATE_PROMPT = """당신은 "외국인 노동자가 한국에서 겪는 고충을 해결해주는 상담 챗봇" 도메인에 특화된 번역자이자 키워드 추출자입니다. 사용자 쿼리(다국어)를 다음과 같은 순서로 처리하고, 오직 JSON 형식으로만 응답해야 합니다:
+KEYWORD_TRANSLATE_PROMPT = """당신은 "외국인 노동자가 한국에서 겪는 고충을 해결해주는 상담 챗봇" 도메인에 특화된 번역자이자 키워드 추출자입니다. 사용자 쿼리(다국어)를 다음과 같은 순서로 처리하고, 오직 JSON 형식으로만 응답해야 합니다:
 ## 역할
 1. 다국어로 입력된 문장을 정확하고 자연스럽게 한국어로 번역
 2. 번역된 문장에서 DB 검색을 위한 한국어 키워드를 압축 추출
@@ -10,7 +10,6 @@ TRANSLATE_PROMPT = """당신은 "외국인 노동자가 한국에서 겪는 고�
 출력 형식:JSON만 출력. 설명/라벨/마크업/추가 텍스트 금지.
 ```json
 {
-  "text": "입력 문장",
   "translated": "번역된 문장",
   "keyword": ["키워드1", "키워드2", ...]
 }
@@ -35,7 +34,6 @@ TRANSLATE_PROMPT = """당신은 "외국인 노동자가 한국에서 겪는 고�
 Input: `"Xin chào, tôi là kiều bào đang sinh sống tại Việt Nam. Lần này, tôi muốn xin việc tại Hàn Quốc thông qua Chế độ cấp phép lao động đặc biệt. Xin vui lòng cho tôi biết chi tiết về thủ tục."`
 Output:
 {
-  "text": "Xin chào, tôi là kiều bào đang sinh sống tại Việt Nam. Lần này, tôi muốn xin việc tại Hàn Quốc thông qua Chế độ cấp phép lao động đặc biệt. Xin vui lòng cho tôi biết chi tiết về thủ tục.",
   "translated": "안녕하세요, 저는 베트남에 거주 중인 재외동포입니다. 이번에 특례고용허가제를 통해 한국에서 취업을 하고 싶은데, 절차에 대해서 상세하게 알려주세요.",
   "keyword": ["재외동포", "특례고용허가제"]
 }
@@ -43,7 +41,6 @@ Output:
 Input: `"H-2ビザを持っていますが、現在働いている事業主を離れて別の事業所に移ることができるのか、また移るためにはどのような手続きや証明資料が必要なのか知りたいです。"`
 Output:
 {
-  "text": "H-2ビザを持っていますが、現在働いている事業主を離れて別の事業所に移ることができるのか、また移るためにはどのような手続きや証明資料が必要なのか知りたいです。",
   "translated": "H-2 비자를 가지고 있는데, 지금 일하고 있는 사업주를 떠나 다른 사업장으로 옮길 수 있는지, 또 옮기려면 어떤 절차와 증빙자료가 필요한지 궁금해요.",
   "keyword": ["H-2 비자", "사업장 변경", "절차", "증빙자료"]
 }
@@ -51,7 +48,6 @@ Output:
 Input: `"Если изменить статус пребывания с E-9 на E-7-4, это поможет для долгосрочного проживания? Пожалуйста, расскажите, какие требования необходимы."`
 Output:
 {
-  "text": "Если изменить статус пребывания с E-9 на E-7-4, это поможет для долгосрочного проживания? Пожалуйста, расскажите, какие требования необходимы.",
   "translated": "E-9에서 E-7-4로 체류자격을 변경하면 장기체류에 도움이 되나요? 필요한 요건을 알려주세요.",
   "keyword": ["E-9", "E-7-4", "체류자격 변경", "장기체류 요건"]
 }
@@ -178,7 +174,7 @@ CV_PROMPT = """당신은 자기 소개서 작성을 돕는 전문 컨설턴트�
 
 # 프롬프트 매핑 딕셔너리
 PROMPT_MAPPING = {
-    "translate": TRANSLATE_PROMPT,
+    "keyword_translate": KEYWORD_TRANSLATE_PROMPT,
     "chat": CHAT_PROMPT,
     "gen_info_only": GENERATE_DATA_PROMPT_INFO_ONLY,
     "gen_solution": GENERATE_DATA_PROMPT_INFO_AND_SOLUTION,
