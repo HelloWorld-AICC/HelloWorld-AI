@@ -31,6 +31,8 @@ dependencies = [
     "jiter==0.10.0",
     "jupyter-client==8.6.3",
     "jupyter-core==5.8.1",
+    "langchain-mongodb>=0.7.0",
+    "langchain-openai>=0.3.33",
     "matplotlib-inline==0.1.7",
     "nest-asyncio==1.6.0",
     "nodeenv==1.9.1",

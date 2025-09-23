@@ -33,23 +33,37 @@ class ChatModel:
         if not keywords or len(keywords) == 0:
             return []
 
-        # 키워드가 1개뿐이면 OR 조건으로 검색
-        if len(keywords) == 1:
-            keyword_query = {"text": {"$regex": keywords[0], "$options": "i"}}
-        else:
-            # 키워드가 2개 이상이면 최소 2개 이상 포함 조건으로 검색
-            keyword_query = {"text": {"$regex": "|".join(keywords), "$options": "i"}}
+        # 실제 컬렉션 필드명(`title`, `contents`)을 대상으로 정규식 OR 검색
+        # 키워드가 1개이든 여러 개이든 우선 후보군은 OR 매칭으로 넓게 가져온 뒤, 아래에서 최소 2개 이상 매칭으로 필터링
+        pattern = keywords[0] if len(keywords) == 1 else "|".join(keywords)
+        keyword_query = {
+            "$or": [
+                {"title": {"$regex": pattern, "$options": "i"}},
+                {"contents": {"$regex": pattern, "$options": "i"}},
+            ]
+        }
 
         # 키워드 검색 수행
         keyword_results = list(
-            collection.find(keyword_query, {"text": 1, "source": 1, "_id": 1})
+            collection.find(
+                keyword_query,
+                {
+                    "title": 1,
+                    "contents": 1,
+                    "url": 1,
+                    "_id": 1,
+                },
+            )
         )
 
         # 각 문서에 대해 키워드 매칭 점수 계산 및 필터링
         scored_docs = []
         for doc in keyword_results:
             score = 0
-            text_content = doc.get("text", "").lower()
+            # 검색 대상 텍스트 결합
+            title_value = doc.get("title", "") or ""
+            contents_value = doc.get("contents", "") or ""
+            text_content = f"{title_value} {contents_value}".lower()
             matched_keywords = []
 
             # 각 키워드가 포함된 횟수만큼 점수 추가
@@ -64,8 +78,9 @@ class ChatModel:
                 scored_docs.append(
                     {
                         "_id": doc["_id"],
-                        "text": doc.get("text", ""),
-                        "source": doc.get("source", ""),
+                        "title": title_value,
+                        "contents": contents_value,
+                        "url": doc.get("url", ""),
                         "keyword_score": score,
                         "matched_keywords": matched_keywords,
                         "matched_count": len(matched_keywords),
@@ -74,6 +89,14 @@ class ChatModel:
 
         # 키워드 점수로 내림차순 정렬
         scored_docs.sort(key=lambda x: x["keyword_score"], reverse=True)
+
+        # 로깅: 후보/필터 통과/리턴 수
+        try:
+            logging.info(
+                f"키워드 후보 {len(keyword_results)}개, 필터 통과 {len(scored_docs)}개, 반환 {min(len(scored_docs), top_k)}개"
+            )
+        except Exception:
+            pass
 
         return scored_docs[:top_k]
 
@@ -126,8 +149,9 @@ class ChatModel:
                     },
                     {
                         "$project": {
-                            "text": 1,
-                            "source": 1,
+                            "title": 1,
+                            "contents": 1,
+                            "url": 1,
                             "score": {"$meta": "vectorSearchScore"},
                             "_id": 1,
                         }
@@ -143,8 +167,9 @@ class ChatModel:
                     all_results.append(
                         {
                             "_id": doc["_id"],
-                            "text": doc.get("text", ""),
-                            "source": doc.get("source", ""),
+                            "title": doc.get("title", ""),
+                            "contents": doc.get("contents", ""),
+                            "url": doc.get("url", ""),
                             "vector_score": doc.get("score", 0),
                             "search_type": "vector",
                         }
@@ -196,16 +221,20 @@ class ChatModel:
                     elif "vector_score" in result:
                         logging.info(f"벡터 점수: {result.get('vector_score', 'N/A')}")
 
-                    logging.info(f"출처: {result.get('source', 'N/A')}")
-                    logging.info(
-                        f"내용: {result.get('text', 'N/A')[:100]}..."
-                    )  # 앞부분만 로깅
+                    logging.info(f"출처(URL): {result.get('url', 'N/A')}")
+                    content_snippet = (
+                        result.get("contents")
+                        or result.get("title")
+                        or result.get("text")
+                        or ""
+                    )
+                    logging.info(f"내용: {content_snippet[:100]}...")  # 앞부분만 로깅
 
                     # 컨텍스트에 추가
                     search_type = "키워드" if "keyword_score" in result else "벡터"
                     context += f"""
-                    관련 사례 {idx} ({search_type} 검색, 출처: {result.get('source', 'N/A')}):
-                    {result.get('text', '')}
+                    관련 사례 {idx} ({search_type} 검색, 출처: {result.get('url', 'N/A')}):
+                    {(result.get('contents') or result.get('title') or '')}
                     """
 
             # config에서 대화 수 가져와서 사용
@@ -309,57 +338,3 @@ class ChatModel:
         except Exception as e:
             logging.error(f"Error in generate_ai_response_first_query: {str(e)}")
             raise ValueError()
-
-    # 키워드 검색 테스트 함수
-    def test_keyword_search(self, keywords, collection, top_k=5):
-        """
-        키워드 검색 기능을 테스트하는 함수
-        """
-        print(f"=== 키워드 검색 테스트 ===")
-        print(f"키워드: {keywords}")
-        print(f"Top-k: {top_k}")
-
-        results = self.keyword_search(keywords, collection, top_k)
-
-        print(f"\n검색 결과: {len(results)}개")
-        for i, doc in enumerate(results, 1):
-            print(f"\n[{i}] 문서 ID: {doc['_id']}")
-            print(f"키워드 점수: {doc['keyword_score']}")
-            print(f"매칭된 키워드: {doc['matched_keywords']}")
-            print(
-                f"매칭된 키워드 수: {doc.get('matched_count', len(doc['matched_keywords']))}"
-            )
-            print(f"출처: {doc['source']}")
-            print(f"내용: {doc['text'][:100]}...")
-
-        return results
-
-    # 하이브리드 검색 테스트 함수
-    def test_hybrid_search(self, query, keywords, collection, top_k=5):
-        """
-        하이브리드 검색 기능을 테스트하는 함수
-        """
-        print(f"=== 하이브리드 검색 테스트 ===")
-        print(f"쿼리: {query}")
-        print(f"키워드: {keywords}")
-        print(f"Top-k: {top_k}")
-
-        results = self.hybrid_search(query, keywords, collection, top_k)
-
-        print(f"\n검색 결과: {len(results)}개")
-        for i, doc in enumerate(results, 1):
-            print(f"\n[{i}] 문서 ID: {doc['_id']}")
-            if "keyword_score" in doc:
-                print(f"검색 타입: 키워드")
-                print(f"키워드 점수: {doc['keyword_score']}")
-                print(f"매칭된 키워드: {doc['matched_keywords']}")
-                print(
-                    f"매칭된 키워드 수: {doc.get('matched_count', len(doc['matched_keywords']))}"
-                )
-            elif "vector_score" in doc:
-                print(f"검색 타입: 벡터")
-                print(f"벡터 점수: {doc['vector_score']:.4f}")
-            print(f"출처: {doc['source']}")
-            print(f"내용: {doc['text'][:100]}...")
-
-        return results
