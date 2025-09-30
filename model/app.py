@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os, sys
 import json
 import logging
+from utils.logging_setup import setup_logging
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langchain_elasticsearch import ElasticsearchStore
@@ -22,31 +23,29 @@ THRESHOLD = 0.25
 
 print("## config_name : ", CONFIG_NAME)
 
-with open(f'configs/{CONFIG_NAME}', 'r') as f:
+with open(f"configs/{CONFIG_NAME}", "r") as f:
     config = json.load(f)
 
-if config['db'] == 'elasticsearch':
+if config["db"] == "elasticsearch":
     os.environ["ES_CLOUD_ID"] = os.getenv("ES_CLOUD_ID")
     os.environ["ES_USER"] = os.getenv("ES_USER")
-    os.environ['ES_PASSWORD'] = os.getenv("ES_PASSWORD")
+    os.environ["ES_PASSWORD"] = os.getenv("ES_PASSWORD")
     os.environ["ES_API_KEY"] = os.getenv("ES_API_KEY")
 
-elif config['db'] == 'mongo':
-   os.environ["MONGODB_ATLAS_CLUSTER_URI"] = os.getenv("MONGODB_ATLAS_CLUSTER_URI")
-   api_key = os.getenv('MONGODB_API_KEY')
-   cluster_url = "helloworld-ai.fpdjl.mongodb.net" 
-   uri = f"mongodb+srv://{api_key}@{cluster_url}/?authMechanism=MONGODB-AWS&authSource=$external"
-   print('## db : ',config['db'])
-   print('## db_name : ',config['path']['db_name'])
+elif config["db"] == "mongo":
+    os.environ["MONGODB_ATLAS_CLUSTER_URI"] = os.getenv("MONGODB_ATLAS_CLUSTER_URI")
+    api_key = os.getenv("MONGODB_API_KEY")
+    cluster_url = "helloworld-ai.fpdjl.mongodb.net"
+    uri = f"mongodb+srv://{api_key}@{cluster_url}/?authMechanism=MONGODB-AWS&authSource=$external"
+    print("## db : ", config["db"])
+    print("## db_name : ", config["path"]["db_name"])
 
 
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_KEY")
 
 
 # 로깅 설정
-logging.basicConfig(filename='./model/log_file.txt', level=logging.INFO, 
-                    format="[ %(asctime)s | %(levelname)s ] %(message)s", 
-                    datefmt="%Y-%m-%d %H:%M:%S")
+setup_logging()
 logger = logging.getLogger(__name__)
 
 if INCLUDE_RAG == False:
@@ -58,33 +57,36 @@ CORS(app)
 
 
 # 대화 기록을 저장할 리스트
-conversations = []; conversations_length = 0
+conversations = []
+conversations_length = 0
 
 
 # Load DB once at startup
 db = None
 
 try:
-    if config['db'] == 'elasticsearch':
-        db = ElasticsearchStore(
-            index_name='helloworld',
-            embedding=OpenAIEmbeddings()
+    if config["db"] == "elasticsearch":
+        db = ElasticsearchStore(index_name="helloworld", embedding=OpenAIEmbeddings())
+    elif config["db"] == "mongo":
+        client = MongoClient(
+            os.environ["MONGODB_ATLAS_CLUSTER_URI"],
+            ssl=True,
+            tlsCAFile="/etc/ssl/certs/ca-certificates.crt",
         )
-    elif config['db'] == 'mongo':
-        client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"], ssl=True,
-                             tlsCAFile='/etc/ssl/certs/ca-certificates.crt')
-        #client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"],tls=True, tlsInsecure=False)
-        
-        MONGODB_COLLECTION = client[config['path']['db_name']][config['path']['collection_name']]
+        # client = MongoClient(os.environ["MONGODB_ATLAS_CLUSTER_URI"],tls=True, tlsInsecure=False)
+
+        MONGODB_COLLECTION = client[config["path"]["db_name"]][
+            config["path"]["collection_name"]
+        ]
         db = MongoDBAtlasVectorSearch(
-            collection = MONGODB_COLLECTION,
-            embedding = OpenAIEmbeddings(model="text-embedding-3-large"),
-            index_name = config['path']['index_name'],
-            relevance_score_fn = "cosine" # [cosine, euclidean, dotProduct]
+            collection=MONGODB_COLLECTION,
+            embedding=OpenAIEmbeddings(model="text-embedding-3-large"),
+            index_name=config["path"]["index_name"],
+            relevance_score_fn="cosine",  # [cosine, euclidean, dotProduct]
         )
     else:
         raise ValueError("Wrong db value setted in config file")
-    
+
 except Exception as e:
     print(f"Error loading database: {str(e)}")
 
@@ -96,15 +98,17 @@ def generate_bllossom_response(query, db):
     import torch
     from vllm import LLM, SamplingParams
 
-    tokenizer = AutoTokenizer.from_pretrained(config["quantized_path"], trust_remote_code=True)
+    tokenizer = AutoTokenizer.from_pretrained(
+        config["quantized_path"], trust_remote_code=True
+    )
 
     llm = ChatOpenAI(
-        model=config['openai_chat_inference']['model'],
-        frequency_penalty=config['openai_chat_inference']['frequency_penalty'],
-        logprobs=config['openai_chat_inference']['logprobs'],
-        top_logprobs=config['openai_chat_inference']['top_logprobs'],
-        max_tokens=config['chat_inference']['max_new_tokens'],  # 최대 토큰수
-        temperature=config['chat_inference']['temperature'],  # 창의성 (0.0 ~ 2.0)
+        model=config["openai_chat_inference"]["model"],
+        frequency_penalty=config["openai_chat_inference"]["frequency_penalty"],
+        logprobs=config["openai_chat_inference"]["logprobs"],
+        top_logprobs=config["openai_chat_inference"]["top_logprobs"],
+        max_tokens=config["chat_inference"]["max_new_tokens"],  # 최대 토큰수
+        temperature=config["chat_inference"]["temperature"],  # 창의성 (0.0 ~ 2.0)
     )
 
     template_text = """
@@ -119,7 +123,7 @@ def generate_bllossom_response(query, db):
     7. 대화 기록을 참고하여 문맥에 맞는 자연스러운 응답을 제공하세요.
     8. 사용자의 이전 질문이나 concerns를 기억하고 연관된 정보를 제공하세요.
 
-    관련 문서: 
+    관련 문서:
     {context}
 
     이전 대화:
@@ -127,54 +131,65 @@ def generate_bllossom_response(query, db):
     """
 
     # history 기록 넣기?
-    similar_docs = db.similarity_search_with_relevance_scores(query, k=config['config']['top_k'])
+    similar_docs = db.similarity_search_with_relevance_scores(
+        query, k=config["config"]["top_k"]
+    )
     similar_docs = similar_docs[::-1]
 
     # for i, doc in enumerate(similar_docs):
     #     logger.info(f"Top-{i+1} document : {doc.page_content}\n\n")
 
-
     # 검색된 문서의 내용을 하나의 문자열로 결합
-    context = " ".join([doc[0].page_content for doc in similar_docs if doc[1] > THRESHOLD])
+    context = " ".join(
+        [doc[0].page_content for doc in similar_docs if doc[1] > THRESHOLD]
+    )
 
     # 템플릿 설정
     prompt_template = PromptTemplate.from_template(template_text)
 
     # 템플릿에 값을 채워서 프롬프트를 완성
-    filled_prompt = prompt_template.format(context = context, conversation_history= conversations, user_query=query)
+    filled_prompt = prompt_template.format(
+        context=context, conversation_history=conversations, user_query=query
+    )
 
     # truncation - context length 넘을 경우 이전 대화 기록부터 삭제
-    if config["config"]['quantized_path'] == "ywhwang/llama-3-Korean-Bllossom-8B-awq" and model_tokens(config["config"]['quantized_path'], filled_prompt) >= config["config"]["context_length"]:
+    if (
+        config["config"]["quantized_path"] == "ywhwang/llama-3-Korean-Bllossom-8B-awq"
+        and model_tokens(config["config"]["quantized_path"], filled_prompt)
+        >= config["config"]["context_length"]
+    ):
         logger.info("Max length exceeded!")
         conversations.pop(0)
-        filled_prompt = prompt_template.format(context = context, conversation_history= conversations, user_query=query)
-    
+        filled_prompt = prompt_template.format(
+            context=context, conversation_history=conversations, user_query=query
+        )
+
     messages = [
-        {'role': 'system', 'content': f"{filled_prompt}"},
-        {'role': 'user', 'content': f"사용자 질문\n{query}"}
+        {"role": "system", "content": f"{filled_prompt}"},
+        {"role": "user", "content": f"사용자 질문\n{query}"},
     ]
 
     chat_messages = tokenizer.apply_chat_template(
-        messages,
-        tokenize=False,
-        add_generation_prompt=True
+        messages, tokenize=False, add_generation_prompt=True
     )
 
-    
-
     # Create a sampling params object.
-    sampling_params = SamplingParams(temperature=config["chat_inference"]["temperature"], 
-                                     top_p=config["chat_inference"]["top_p"], max_tokens=config["chat_inference"]["max_tokens"])
-    
-    llm = LLM(model=config["config"]["quantized_path"],
-          tokenizer=config["config"]["quantized_path"],
-          trust_remote_code = True,
-          dtype="float16",
-          quantization="AWQ")
-    
+    sampling_params = SamplingParams(
+        temperature=config["chat_inference"]["temperature"],
+        top_p=config["chat_inference"]["top_p"],
+        max_tokens=config["chat_inference"]["max_tokens"],
+    )
+
+    llm = LLM(
+        model=config["config"]["quantized_path"],
+        tokenizer=config["config"]["quantized_path"],
+        trust_remote_code=True,
+        dtype="float16",
+        quantization="AWQ",
+    )
+
     with torch.inference_mode():
-        output = llm.generate([chat_messages],
-                                sampling_params=sampling_params)
+        output = llm.generate([chat_messages], sampling_params=sampling_params)
 
     return output[0].outputs[0].text
 
@@ -183,12 +198,12 @@ def generate_bllossom_response(query, db):
 def generate_gpt_response(query, db):
     global conversations
     llm = ChatOpenAI(
-        model=config['openai_chat_inference']['model'],
-        frequency_penalty=config['openai_chat_inference']['frequency_penalty'],
-        logprobs=config['openai_chat_inference']['logprobs'],
-        top_logprobs=config['openai_chat_inference']['top_logprobs'],
-        max_tokens=config['chat_inference']['max_new_tokens'],  # 최대 토큰수
-        temperature=config['chat_inference']['temperature'],  # 창의성 (0.0 ~ 2.0)
+        model=config["openai_chat_inference"]["model"],
+        frequency_penalty=config["openai_chat_inference"]["frequency_penalty"],
+        logprobs=config["openai_chat_inference"]["logprobs"],
+        top_logprobs=config["openai_chat_inference"]["top_logprobs"],
+        max_tokens=config["chat_inference"]["max_new_tokens"],  # 최대 토큰수
+        temperature=config["chat_inference"]["temperature"],  # 창의성 (0.0 ~ 2.0)
     )
 
     template_text = """
@@ -203,7 +218,7 @@ def generate_gpt_response(query, db):
     7. 이전 대화 내용을 참고하여 문맥에 맞는 자연스러운 응답을 제공하세요.
     8. 사용자의 이전 질문이나 concerns를 기억하고 연관된 정보를 제공하세요.
 
-    관련 문서: 
+    관련 문서:
     {context}
 
     이전 대화:
@@ -212,43 +227,58 @@ def generate_gpt_response(query, db):
     사용자 질문:
     {user_query}
     """
-    
-    similar_docs = db.similarity_search_with_relevance_scores(query, k=config['config']['top_k'])
+
+    similar_docs = db.similarity_search_with_relevance_scores(
+        query, k=config["config"]["top_k"]
+    )
     similar_docs = similar_docs[::-1]
 
     for i, doc in enumerate(similar_docs):
         print(f"## Top-{i+1} document : {doc}\n\n")
 
     # 검색된 문서의 내용을 하나의 문자열로 결합
-    context = " ".join([doc[0].page_content for doc in similar_docs if doc[1] > THRESHOLD])
+    context = " ".join(
+        [doc[0].page_content for doc in similar_docs if doc[1] > THRESHOLD]
+    )
 
     # 템플릿 설정
     prompt_template = PromptTemplate.from_template(template_text)
 
     # 템플릿에 값을 채워서 프롬프트를 완성
-    filled_prompt = prompt_template.format(context = context, conversation_history= conversations, user_query=query)
-    
+    filled_prompt = prompt_template.format(
+        context=context, conversation_history=conversations, user_query=query
+    )
+
     # truncation - context length 넘을 경우 이전 대화 기록부터 삭제
-    if config["openai_chat_inference"]['model'] == "gpt-3.5-turbo-0125" and gpt_tokens(model_name=config["openai_chat_inference"]['model'], string=filled_prompt) >= config["openai_chat_inference"]["context_length"]:
+    if (
+        config["openai_chat_inference"]["model"] == "gpt-3.5-turbo-0125"
+        and gpt_tokens(
+            model_name=config["openai_chat_inference"]["model"], string=filled_prompt
+        )
+        >= config["openai_chat_inference"]["context_length"]
+    ):
         logger.info("## Max length exceeded!")
         conversations.pop(0)
-        filled_prompt = prompt_template.format(context = context, conversation_history= conversations, user_query=query)
+        filled_prompt = prompt_template.format(
+            context=context, conversation_history=conversations, user_query=query
+        )
 
     logger.info(f"## total prompt : {filled_prompt}")
-    output = llm.invoke(input = filled_prompt)
-    
+    output = llm.invoke(input=filled_prompt)
+
     return output.content
+
 
 ## no rag
 def generate_no_rag_gpt_response(query, db):
     global conversations
     llm = ChatOpenAI(
-        model=config['openai_chat_inference']['model'],
-        frequency_penalty=config['openai_chat_inference']['frequency_penalty'],
-        logprobs=config['openai_chat_inference']['logprobs'],
-        top_logprobs=config['openai_chat_inference']['top_logprobs'],
-        max_tokens=config['chat_inference']['max_new_tokens'],  # 최대 토큰수
-        temperature=config['chat_inference']['temperature'],  # 창의성 (0.0 ~ 2.0)
+        model=config["openai_chat_inference"]["model"],
+        frequency_penalty=config["openai_chat_inference"]["frequency_penalty"],
+        logprobs=config["openai_chat_inference"]["logprobs"],
+        top_logprobs=config["openai_chat_inference"]["top_logprobs"],
+        max_tokens=config["chat_inference"]["max_new_tokens"],  # 최대 토큰수
+        temperature=config["chat_inference"]["temperature"],  # 창의성 (0.0 ~ 2.0)
     )
 
     template_text = """
@@ -273,32 +303,41 @@ def generate_no_rag_gpt_response(query, db):
     prompt_template = PromptTemplate.from_template(template_text)
 
     # 템플릿에 값을 채워서 프롬프트를 완성
-    filled_prompt = prompt_template.format(conversation_history= conversations, user_query=query)
-    
+    filled_prompt = prompt_template.format(
+        conversation_history=conversations, user_query=query
+    )
+
     # truncation - context length 넘을 경우 이전 대화 기록부터 삭제
-    if config["openai_chat_inference"]['model'] == "gpt-3.5-turbo-0125" and gpt_tokens(model_name=config["openai_chat_inference"]['model'], string=filled_prompt) >= config["openai_chat_inference"]["context_length"]:
+    if (
+        config["openai_chat_inference"]["model"] == "gpt-3.5-turbo-0125"
+        and gpt_tokens(
+            model_name=config["openai_chat_inference"]["model"], string=filled_prompt
+        )
+        >= config["openai_chat_inference"]["context_length"]
+    ):
         logger.info("## Max length exceeded!")
         conversations.pop(0)
-        filled_prompt = prompt_template.format(conversation_history= conversations, user_query=query)
+        filled_prompt = prompt_template.format(
+            conversation_history=conversations, user_query=query
+        )
 
     logger.info(f"## total prompt : {filled_prompt}")
-    output = llm.invoke(input = filled_prompt)
-    
+    output = llm.invoke(input=filled_prompt)
+
     return output.content
 
 
-
-@app.route('/')
+@app.route("/")
 def hello_world():
-    return 'Hello, World!'
+    return "Hello, World!"
 
 
-@app.route('/get_test/<param>', methods=['GET'])
+@app.route("/get_test/<param>", methods=["GET"])
 def get_echo_call(param):
     return jsonify({"param": param})
 
 
-@app.route('/question', methods=['POST'])
+@app.route("/question", methods=["POST"])
 def question():
     global conversations, conversations_length
     if db is None:
@@ -308,25 +347,31 @@ def question():
         # logger.info(f"Received data: {data}")  # 받은 데이터 로깅
 
         # 새로운 쿼리 형식 처리
-        conversation = data.get('Conversation', [])
+        conversation = data.get("Conversation", [])
         if not conversation:
             return jsonify({"error": "No conversation data provided"}), 400
 
-        print('## history ##')
+        print("## history ##")
         print(conversations)
 
         # 마지막 human 발화 추출
-        user_query = next((item['utterance'] for item in reversed(conversation) if item['speaker'] == 'human'), None)
+        user_query = next(
+            (
+                item["utterance"]
+                for item in reversed(conversation)
+                if item["speaker"] == "human"
+            ),
+            None,
+        )
 
         logger.info(f"## 사용자 쿼리: {user_query}")
 
         if user_query == "감사합니다" or user_query == "종료" or user_query == "quit":
-            # log를 파일에 출력
-            file_handler = logging.FileHandler('./model/log_file.txt')
-            logger.addHandler(file_handler)
-
             print("## log completed!")
-            return jsonify({"end": "dialog end"}), 200  # 200은 HTTP 성공 상태 코드입니다
+            return (
+                jsonify({"end": "dialog end"}),
+                200,
+            )  # 200은 HTTP 성공 상태 코드입니다
 
         # AI 응답 생성
         if CONFIG_NAME == "gpt_config.json":
@@ -340,12 +385,13 @@ def question():
             else:
                 answer = generate_no_rag_gpt_response(user_query, db)
 
-
             # 대화 turn 저장
             conversations.append({"human": user_query})
-            conversations.append({"system" : answer})
-            conversations_length += gpt_tokens(model_name=config["openai_chat_inference"]['model'], string=answer)
-        
+            conversations.append({"system": answer})
+            conversations_length += gpt_tokens(
+                model_name=config["openai_chat_inference"]["model"], string=answer
+            )
+
         elif CONFIG_NAME == "bllossom_config.json":
             if user_query is None:
                 return jsonify({"error": "No user utterance found"}), 400
@@ -354,9 +400,11 @@ def question():
             answer = generate_bllossom_response(user_query, db)
             # 대화 turn 저장
             conversations.append({"human": user_query})
-            conversations.append({"system" : answer})
+            conversations.append({"system": answer})
 
-            conversations_length += model_tokens(config["config"]['quantized_path'], answer)
+            conversations_length += model_tokens(
+                config["config"]["quantized_path"], answer
+            )
 
         # logger.info(f"Generated AI response: {answer}")  # 생성된 AI 응답 로깅
 
@@ -368,7 +416,6 @@ def question():
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
     sys.exit(0)

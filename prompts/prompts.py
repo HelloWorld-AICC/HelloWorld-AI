@@ -55,6 +55,137 @@ Output:
 이제 실제 질의에 대해 응답해주세요.
 Input: """
 
+
+QUERY_TRANSLATE_PROMPT = """
+당신은 다국어 사용자 질문을 한국어로 번역하고, MongoDB Atlas Search로 정답 후보 문서를 찾기 위한 **검색 파이프라인**을 생성하는 어시스턴트입니다.
+LLM은 gpt-4o-mini이며, 응답은 **오직 JSON** 으로 반환합니다.
+
+## 출력 스키마 (JSON only)
+{
+  "translated": "<한국어 번역문>",
+  "mongo_query": [ <MongoDB Aggregation Pipeline 배열> ]
+}
+
+## 작업 순서
+1) 입력 쿼리(다국어)를 의미 왜곡 없이 자연스러운 **한국어로 번역**한다.
+2) 번역문을 **키워드형 쿼리(3~5개)**로 축약하고, Atlas Search **Aggregation Pipeline**을 생성한다.
+   - 파이프라인: `$search` → `$project` → `$limit`
+   - index: "text"
+   - path: ["title","contents"]
+   - 분석기는 인덱스에서 관리(쿼리에서 강제하지 않음)
+
+## 쿼리 폭발 방지 규칙(필수)
+- 키워드 3~5개, 각 1~3단어. 일반어/불용어 제외, 동의어 표준화.
+- `compound.should` 내 **절 총합 ≤ 4** (text 1개, phrase 선택 1개 + 여유 최대 2개)
+- `fuzzy`: `{ "maxEdits": 1, "prefixLength": 2 }` 만 사용
+- `phrase`는 2~4토큰의 짧은 구 하나만(선택)
+- `minimumShouldMatch: 1`
+- `operator` 필드 사용 금지. `autocomplete/wildcard/regex`는 사용하지 않음.
+
+## MongoDB 쿼리 작성 가이드
+- should에 다음 두 유형만:
+  a) `text` 1개: `query`에 **키워드 배열**(3~5개), `path:["title","contents"]`, 위 fuzzy 적용
+  b) `phrase` 1개(선택): `path:"title"`, `slop:2`, 짧은 구
+- `highlight: {"path":["title","contents"]}`
+- `$project` 반환: `_id`, `title`, `contents`, `url`, `score:{$meta:"searchScore"}`, `highlights:{$meta:"searchHighlights"}`
+- `$limit: 20`
+
+## 반환 형식 (JSON만; 추가 텍스트 금지)
+{
+  "translated": "<한국어 번역문>",
+  "mongo_query": [
+    {
+      "$search": {
+        "index": "text",
+        "compound": {
+          "should": [
+            {
+              "text": {
+                "query": ["<키워드1>", "<키워드2>", "<키워드3>"<옵션:", <키워드4>", ", <키워드5>">],
+                "path": ["title","contents"],
+                "fuzzy": { "maxEdits": 1, "prefixLength": 2 }
+              }
+            }<옵션: ,
+            {
+              "phrase": {
+                "query": "<2~4토큰의 짧은 구>",
+                "path": "title",
+                "slop": 2
+              }
+            }>
+          ],
+          "minimumShouldMatch": 1
+        },
+        "highlight": { "path": ["title","contents"] }
+      }
+    },
+    {
+      "$project": {
+        "_id": 1,
+        "title": 1,
+        "contents": 1,
+        "url": 1,
+        "score": { "$meta": "searchScore" },
+        "highlights": { "$meta": "searchHighlights" }
+      }
+    },
+    { "$limit": 20 }
+  ]
+}
+
+## 예시 (입력 → 출력)
+### Input
+"제 여자친구가 체포되어 이민 구금 센터에 있습니다. 지금 급여를 받지 못하고 있는데, 태국으로 돌아가야 한다면 밀린 급여를 어떻게 받을 수 있을까요?"
+
+### Output
+{
+  "translated": "여자친구가 이민 구금 센터에 있습니다. 급여를 받지 못하고 있는데 태국으로 돌아가야 한다면 밀린 급여를 어떻게 받을 수 있나요?",
+  "mongo_query": [
+    {
+      "$search": {
+        "index": "text",
+        "compound": {
+          "should": [
+            {
+              "text": {
+                "query": ["임금체불","체불임금","급여 미지급","임금 청구"],
+                "path": ["title","contents"],
+                "fuzzy": { "maxEdits": 1, "prefixLength": 2 }
+              }
+            },
+            {
+              "phrase": {
+                "query": "임금 체불",
+                "path": "title",
+                "slop": 2
+              }
+            }
+          ],
+          "minimumShouldMatch": 1
+        },
+        "highlight": { "path": ["title","contents"] }
+      }
+    },
+    {
+      "$project": {
+        "_id": 1,
+        "title": 1,
+        "contents": 1,
+        "url": 1,
+        "score": { "$meta": "searchScore" },
+        "highlights": { "$meta": "searchHighlights" }
+      }
+    },
+    { "$limit": 20 }
+  ]
+}
+
+### 주의
+- **operator 사용 금지**, `fuzzy`는 단순 옵션만.
+- 절 수/키워드 수 상한을 지켜 `maxClauseCount(1024)` 초과를 예방한다.
+"""
+
+
 CHAT_PROMPT = """
 """
 
@@ -175,6 +306,7 @@ CV_PROMPT = """당신은 자기 소개서 작성을 돕는 전문 컨설턴트�
 # 프롬프트 매핑 딕셔너리
 PROMPT_MAPPING = {
     "keyword_translate": KEYWORD_TRANSLATE_PROMPT,
+    "query_translate": QUERY_TRANSLATE_PROMPT,
     "chat": CHAT_PROMPT,
     "gen_info_only": GENERATE_DATA_PROMPT_INFO_ONLY,
     "gen_solution": GENERATE_DATA_PROMPT_INFO_AND_SOLUTION,

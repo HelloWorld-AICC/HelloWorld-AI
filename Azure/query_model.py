@@ -25,107 +25,58 @@ class ChatModel:
             # temperature=config['chat_config']['temperature']
         )
 
-    # 키워드 기반 검색 함수
-    def keyword_search(self, keywords, collection, top_k):
+    # 하이브리드 검색 함수 (mongo_query 파이프라인 + ANN)
+    def hybrid_search(self, query, mongo_query, collection, top_k):
         """
-        키워드 리스트를 받아서 최소 2개 이상의 키워드가 포함된 문서를 검색하고 점수를 계산
-        """
-        if not keywords or len(keywords) == 0:
-            return []
-
-        # 실제 컬렉션 필드명(`title`, `contents`)을 대상으로 정규식 OR 검색
-        # 키워드가 1개이든 여러 개이든 우선 후보군은 OR 매칭으로 넓게 가져온 뒤, 아래에서 최소 2개 이상 매칭으로 필터링
-        pattern = keywords[0] if len(keywords) == 1 else "|".join(keywords)
-        keyword_query = {
-            "$or": [
-                {"title": {"$regex": pattern, "$options": "i"}},
-                {"contents": {"$regex": pattern, "$options": "i"}},
-            ]
-        }
-
-        # 키워드 검색 수행
-        keyword_results = list(
-            collection.find(
-                keyword_query,
-                {
-                    "title": 1,
-                    "contents": 1,
-                    "url": 1,
-                    "_id": 1,
-                },
-            )
-        )
-
-        # 각 문서에 대해 키워드 매칭 점수 계산 및 필터링
-        scored_docs = []
-        for doc in keyword_results:
-            score = 0
-            # 검색 대상 텍스트 결합
-            title_value = doc.get("title", "") or ""
-            contents_value = doc.get("contents", "") or ""
-            text_content = f"{title_value} {contents_value}".lower()
-            matched_keywords = []
-
-            # 각 키워드가 포함된 횟수만큼 점수 추가
-            for keyword in keywords:
-                keyword_count = text_content.count(keyword.lower())
-                if keyword_count > 0:
-                    score += keyword_count
-                    matched_keywords.append(keyword)
-
-            # 최소 2개 이상의 키워드가 매칭된 경우만 포함
-            if len(matched_keywords) >= 2:
-                scored_docs.append(
-                    {
-                        "_id": doc["_id"],
-                        "title": title_value,
-                        "contents": contents_value,
-                        "url": doc.get("url", ""),
-                        "keyword_score": score,
-                        "matched_keywords": matched_keywords,
-                        "matched_count": len(matched_keywords),
-                    }
-                )
-
-        # 키워드 점수로 내림차순 정렬
-        scored_docs.sort(key=lambda x: x["keyword_score"], reverse=True)
-
-        # 로깅: 후보/필터 통과/리턴 수
-        try:
-            logging.info(
-                f"키워드 후보 {len(keyword_results)}개, 필터 통과 {len(scored_docs)}개, 반환 {min(len(scored_docs), top_k)}개"
-            )
-        except Exception:
-            pass
-
-        return scored_docs[:top_k]
-
-    # 하이브리드 검색 함수 (키워드 + ANN)
-    def hybrid_search(self, query, keywords, collection, top_k):
-        """
-        키워드 검색과 ANN 검색을 결합한 하이브리드 검색
+        1단계: MongoDB 파이프라인(`mongo_query`) 기반 텍스트 검색
+        2단계: ANN(Vector) 검색으로 부족분 보충 (중복 제거)
         """
         all_results = []
         seen_ids = set()
 
-        # 1. 키워드 검색 수행
-        if keywords and len(keywords) > 0:
-            keyword_results = self.keyword_search(keywords, collection, top_k)
+        # 1단계: mongo_query 파이프라인 검색
+        try:
+            if mongo_query and isinstance(mongo_query, list) and len(mongo_query) > 0:
+                logging.info("Mongo 파이프라인 검색 수행")
+                stage1_cursor = collection.aggregate(mongo_query)
+                stage1_list = list(stage1_cursor)
 
-            # 키워드 결과 추가 (중복 제거)
-            for doc in keyword_results:
-                if doc["_id"] not in seen_ids:
-                    all_results.append(doc)
-                    seen_ids.add(doc["_id"])
+                for doc in stage1_list:
+                    doc_id = doc.get("_id")
+                    if doc_id not in seen_ids:
+                        all_results.append(
+                            {
+                                "_id": doc_id,
+                                "title": doc.get("title", ""),
+                                "contents": doc.get("contents", ""),
+                                "url": doc.get("url", ""),
+                                # generate_ai_response에서 키워드/텍스트 검색 판별에 사용
+                                "keyword_score": doc.get("score", 0),
+                                "highlights": doc.get("highlights", []),
+                                "search_type": "mongo",
+                            }
+                        )
+                        seen_ids.add(doc_id)
 
-            logging.info(
-                f"키워드 검색 결과: {len(keyword_results)}개 (중복 제거 후: {len(all_results)}개)"
+                if len(stage1_list) == 0:
+                    logging.info(
+                        "Mongo 파이프라인 검색 결과가 없습니다. ANN 단계로 진행합니다."
+                    )
+                else:
+                    logging.info(
+                        f"Mongo 파이프라인 검색 결과: {len(stage1_list)}개 (중복 제거 후: {len(all_results)}개)"
+                    )
+                # 숫자 로그 (Mongo 1단계 원본/중복제거)
+                logging.info(f"mongo_results_count_raw: {len(stage1_list)}")
+                logging.info(f"mongo_results_count_deduped: {len(all_results)}")
+            else:
+                logging.info("유효한 mongo_query가 없어 ANN 단계로 진행합니다.")
+        except Exception as e:
+            logging.error(
+                f"Mongo 파이프라인 검색 중 오류: {str(e)}. ANN 단계로 진행합니다."
             )
-            # 숫자 로그 (키워드 단계 원본/중복제거)
-            logging.info(f"keyword_results_count_raw: {len(keyword_results)}")
-            logging.info(f"keyword_results_count_deduped: {len(all_results)}")
 
-        # 2. ANN 검색으로 부족한 만큼 추가
+        # 2단계: ANN 검색으로 부족한 만큼 추가
         remaining_k = top_k - len(all_results)
         if remaining_k > 0:
             logging.info(f"ANN 검색으로 추가 {remaining_k}개 검색")
@@ -146,8 +97,8 @@ class ChatModel:
                             "numCandidates": self.config["chat_config"][
                                 "numCandidates"
                             ],
-                            "limit": remaining_k
-                            * 2,  # 중복 제거를 위해 더 많이 가져오기
+                            # 중복 제거를 고려해 약간 더 많이 가져온 뒤 상한을 적용
+                            "limit": max(remaining_k * 2, remaining_k),
                         }
                     },
                     {
@@ -163,15 +114,16 @@ class ChatModel:
             )
 
             ann_results_list = list(ann_results)
-            # 숫자 로그 (ANN 2단계 원본)
+
+            # 숫자 로그 (ANN 2단계 원본/중복제거 적용 전)
             logging.info(f"ann_results_count_raw: {len(ann_results_list)}")
 
-            # ANN 결과를 키워드 결과와 동일한 형식으로 변환 (중복 제거)
             for doc in ann_results_list:
-                if doc["_id"] not in seen_ids and len(all_results) < top_k:
+                doc_id = doc.get("_id")
+                if doc_id not in seen_ids and len(all_results) < top_k:
                     all_results.append(
                         {
-                            "_id": doc["_id"],
+                            "_id": doc_id,
                             "title": doc.get("title", ""),
                             "contents": doc.get("contents", ""),
                             "url": doc.get("url", ""),
@@ -179,25 +131,26 @@ class ChatModel:
                             "search_type": "vector",
                         }
                     )
-                    seen_ids.add(doc["_id"])
+                    seen_ids.add(doc_id)
 
-        # 3. 최종 결과 반환 (상위 top_k개)
+        # 3단계: 최종 결과 반환 (상위 top_k)
         final_results = all_results[:top_k]
+        # 숫자 로그 (최종 개수)
         logging.info(f"final_results_count: {len(final_results)}")
         return final_results
 
     # 응답 생성 함수 (키워드 지원)
     def generate_ai_response(
-        self, conversation_history, query, collection, keywords=None
+        self, conversation_history, query, collection, mongo_query
     ):
         try:
             logging.info(f"Generating response for query: {query}")
-            if keywords:
-                logging.info(f"Using keywords: {keywords}")
+            if mongo_query:
+                logging.info(f"Using query: {mongo_query}")
 
             # 하이브리드 검색 수행 (키워드 + ANN)
             top_k = self.config["chat_config"]["top_k"]
-            results_list = self.hybrid_search(query, keywords, collection, top_k)
+            results_list = self.hybrid_search(query, mongo_query, collection, top_k)
 
             logging.info(f"\n=== 하이브리드 검색 결과 (총 {len(results_list)}개) ===")
 
@@ -213,21 +166,6 @@ class ChatModel:
                     # 검색 결과 로깅
                     logging.info(f"[검색 결과 {idx}]")
                     logging.info(f"문서 ID: {result.get('_id', 'N/A')}")
-
-                    # 검색 타입에 따라 다른 점수 표시
-                    if "keyword_score" in result:
-                        logging.info(
-                            f"키워드 점수: {result.get('keyword_score', 'N/A')}"
-                        )
-                        logging.info(
-                            f"매칭된 키워드: {result.get('matched_keywords', [])}"
-                        )
-                        logging.info(
-                            f"매칭된 키워드 수: {result.get('matched_count', len(result.get('matched_keywords', [])))}"
-                        )
-                    elif "vector_score" in result:
-                        logging.info(f"벡터 점수: {result.get('vector_score', 'N/A')}")
-
                     logging.info(f"출처(URL): {result.get('url', 'N/A')}")
                     content_snippet = (
                         result.get("contents")

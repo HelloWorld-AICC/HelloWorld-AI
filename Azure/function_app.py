@@ -1,5 +1,9 @@
 import azure.functions as func
 import logging
+import sys, os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from utils.logging_setup import setup_logging
 import json
 import os
 from dotenv import load_dotenv
@@ -9,6 +13,7 @@ from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
 from pymongo import MongoClient
 
 app = func.FunctionApp()
+setup_logging()
 
 load_dotenv(verbose=True)
 
