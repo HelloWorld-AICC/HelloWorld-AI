@@ -1,39 +1,133 @@
 import logging
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
 
 
 class ChatModel:
     def __init__(self, config):
         self.config = config
+
         # prompt 불러오기
         try:
             with open(
                 f"../model/templates/chat_template.txt", "r", encoding="utf-8"
             ) as file:
                 self.chat_template = file.read()
-
         except Exception as e:
             logging.error(f"Error loading prompt template: {str(e)}")
 
         self.llm = ChatOpenAI(
             model=config["chat_config"]["model"],
-            # temperature=config['chat_config']['temperature']
         )
 
-    # 하이브리드 검색 함수 (mongo_query 파이프라인 + ANN)
+        # Cross-encoder reranker 초기화
+        try:
+            self.reranker_tokenizer = AutoTokenizer.from_pretrained(
+                config["reranker_config"]["model"]
+            )
+            self.reranker_model = AutoModelForSequenceClassification.from_pretrained(
+                config["reranker_config"]["model"]
+            )
+            self.reranker_model.eval()
+            logging.info(f"Reranker model loaded: {config['reranker_config']['model']}")
+        except Exception as e:
+            logging.error(f"Error loading reranker model: {str(e)}")
+            self.reranker_tokenizer = None
+            self.reranker_model = None
+
+    def rerank_documents(self, query, documents):
+        """
+        Cross-encoder를 사용하여 문서들을 재순위화
+        """
+        if not self.reranker_model or not self.reranker_tokenizer or not documents:
+            logging.warning("Reranker model not available or no documents to rerank")
+            return documents
+
+        try:
+            # 쿼리-문서 쌍 준비
+            pairs = []
+            for doc in documents:
+                doc_text = doc.get("contents", "") or doc.get("title", "")
+                if doc_text:
+                    pairs.append([query, doc_text[:512]])  # 텍스트 길이 제한
+                else:
+                    pairs.append([query, ""])
+
+            if not pairs:
+                return documents
+
+            # 토크나이징
+            inputs = self.reranker_tokenizer(
+                pairs,
+                padding=True,
+                truncation=True,
+                max_length=512,
+                return_tensors="pt",
+            )
+
+            # 추론
+            with torch.no_grad():
+                outputs = self.reranker_model(**inputs)
+                logits = outputs.logits
+
+                # logits 차원 확인 및 점수 계산
+                if logits.size(-1) == 1:
+                    # 단일 출력 (회귀 스타일)
+                    scores = torch.sigmoid(logits.squeeze(-1))
+                elif logits.size(-1) == 2:
+                    # 이진 분류 출력
+                    scores = torch.nn.functional.softmax(logits, dim=-1)[:, 1]
+                else:
+                    # 다중 클래스인 경우 첫 번째 클래스 사용
+                    scores = torch.nn.functional.softmax(logits, dim=-1)[:, 0]
+
+                logging.info(
+                    f"Logits shape: {logits.shape}, using appropriate score extraction"
+                )
+
+            # 문서에 rerank 점수 추가
+            for i, doc in enumerate(documents):
+                doc["rerank_score"] = float(scores[i])
+
+            # rerank 점수 기준으로 정렬
+            reranked_docs = sorted(
+                documents, key=lambda x: x.get("rerank_score", 0), reverse=True
+            )
+
+            logging.info(f"Reranked {len(documents)} documents")
+            return reranked_docs
+
+        except Exception as e:
+            logging.error(f"Error in reranking: {str(e)}")
+            return documents
+
+    # 하이브리드 검색 함수 (mongo_query 파이프라인 + ANN + Reranking)
     def hybrid_search(self, query, mongo_query, collection, top_k):
         """
         1단계: MongoDB 파이프라인(`mongo_query`) 기반 텍스트 검색
         2단계: ANN(Vector) 검색으로 부족분 보충 (중복 제거)
+        3단계: Cross-encoder reranking으로 최종 순위 결정
         """
         all_results = []
         seen_ids = set()
+
+        # numCandidates를 사용하여 충분한 후보 문서 수집
+        num_candidates = self.config["reranker_config"]["numCandidates"]
 
         # 1단계: mongo_query 파이프라인 검색
         try:
             if mongo_query and isinstance(mongo_query, list) and len(mongo_query) > 0:
                 logging.info("Mongo 파이프라인 검색 수행")
-                stage1_cursor = collection.aggregate(mongo_query)
+
+                # mongo_query의 $limit을 numCandidates로 수정
+                modified_mongo_query = mongo_query.copy()
+                for stage in modified_mongo_query:
+                    if "$limit" in stage:
+                        stage["$limit"] = num_candidates
+                        break
+
+                stage1_cursor = collection.aggregate(modified_mongo_query)
                 stage1_list = list(stage1_cursor)
 
                 for doc in stage1_list:
@@ -45,7 +139,6 @@ class ChatModel:
                                 "title": doc.get("title", ""),
                                 "contents": doc.get("contents", ""),
                                 "url": doc.get("url", ""),
-                                # generate_ai_response에서 키워드/텍스트 검색 판별에 사용
                                 "keyword_score": doc.get("score", 0),
                                 "highlights": doc.get("highlights", []),
                                 "search_type": "mongo",
@@ -61,7 +154,6 @@ class ChatModel:
                     logging.info(
                         f"Mongo 파이프라인 검색 결과: {len(stage1_list)}개 (중복 제거 후: {len(all_results)}개)"
                     )
-                # 숫자 로그 (Mongo 1단계 원본/중복제거)
                 logging.info(f"mongo_results_count_raw: {len(stage1_list)}")
                 logging.info(f"mongo_results_count_deduped: {len(all_results)}")
             else:
@@ -71,10 +163,10 @@ class ChatModel:
                 f"Mongo 파이프라인 검색 중 오류: {str(e)}. ANN 단계로 진행합니다."
             )
 
-        # 2단계: ANN 검색으로 부족한 만큼 추가
-        remaining_k = top_k - len(all_results)
-        if remaining_k > 0:
-            logging.info(f"ANN 검색으로 추가 {remaining_k}개 검색")
+        # 2단계: ANN 검색으로 부족한 만큼 추가 (numCandidates까지)
+        remaining_candidates = num_candidates - len(all_results)
+        if remaining_candidates > 0:
+            logging.info(f"ANN 검색으로 추가 {remaining_candidates}개 검색")
 
             # ANN 검색 수행
             embedding_model = OpenAIEmbeddings(
@@ -89,11 +181,9 @@ class ChatModel:
                             "index": "vector_index",
                             "path": "Embedding",
                             "queryVector": query_embedding,
-                            "numCandidates": self.config["chat_config"][
-                                "numCandidates"
-                            ],
-                            # 중복 제거를 고려해 약간 더 많이 가져온 뒤 상한을 적용
-                            "limit": max(remaining_k * 2, remaining_k),
+                            "numCandidates": num_candidates,  # reranker_config의 numCandidates 사용
+                            "limit": remaining_candidates
+                            * 2,  # 중복 제거를 고려해 여유분 확보
                         }
                     },
                     {
@@ -109,13 +199,11 @@ class ChatModel:
             )
 
             ann_results_list = list(ann_results)
-
-            # 숫자 로그 (ANN 2단계 원본/중복제거 적용 전)
             logging.info(f"ann_results_count_raw: {len(ann_results_list)}")
 
             for doc in ann_results_list:
                 doc_id = doc.get("_id")
-                if doc_id not in seen_ids and len(all_results) < top_k:
+                if doc_id not in seen_ids and len(all_results) < num_candidates:
                     all_results.append(
                         {
                             "_id": doc_id,
@@ -128,9 +216,17 @@ class ChatModel:
                     )
                     seen_ids.add(doc_id)
 
-        # 3단계: 최종 결과 반환 (상위 top_k)
-        final_results = all_results[:top_k]
-        # 숫자 로그 (최종 개수)
+                    # 필요한 개수만큼 채웠으면 중단
+                    if len(all_results) >= num_candidates:
+                        break
+
+        # 3단계: Cross-encoder reranking
+        logging.info(f"Reranking {len(all_results)} documents")
+        reranked_results = self.rerank_documents(query, all_results)
+
+        # 4단계: 최종 결과 반환 (상위 top_k)
+        final_results = reranked_results[:top_k]
+        logging.info(f"candidates_before_rerank: {len(all_results)}")
         logging.info(f"final_results_count: {len(final_results)}")
         return final_results
 

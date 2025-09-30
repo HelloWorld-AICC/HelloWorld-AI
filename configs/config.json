@@ -21,6 +21,11 @@
         "temperature" : 0
     },
 
+    "reranker_config" : {
+        "model" : "bongsoo/klue-cross-encoder-v1",
+        "numCandidates" : 40
+    },
+
     "path" : {
         "data_file_name": "data/postprocessed_data/industrial_accident.json",
         "db_name": "HelloWorld-AI",

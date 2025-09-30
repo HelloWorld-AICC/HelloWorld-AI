@@ -1,10 +1,5 @@
 import logging
-import json
-import os
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_core.prompts import PromptTemplate
-from langchain_mongodb.vectorstores import MongoDBAtlasVectorSearch
-from pymongo import MongoClient
 
 
 class ChatModel:
