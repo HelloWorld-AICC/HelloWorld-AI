@@ -22,8 +22,8 @@
     },
 
     "reranker_config" : {
-        "model" : "bongsoo/klue-cross-encoder-v1",
-        "numCandidates" : 40
+        "model" : "Dongjin-kr/ko-reranker",
+        "numCandidates" : 30
     },
 
     "path" : {
