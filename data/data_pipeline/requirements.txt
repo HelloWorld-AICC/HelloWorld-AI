@@ -4,6 +4,8 @@ requests>=2.28.0
 beautifulsoup4>=4.11.0
 pandas>=1.5.0
 lxml>=4.9.0
+pymongo>=4.5.0
+openai>=1.12.0
 
 # 선택적 의존성 (고급 기능용)
 playwright>=1.40.0  # JavaScript 렌더링 (주요)

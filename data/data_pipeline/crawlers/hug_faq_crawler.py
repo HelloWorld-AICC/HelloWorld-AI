@@ -28,7 +28,7 @@ class HugFaqCrawler(BaseCrawler):
         faq_root = soup.select_one(".faq") or soup
         items = []
 
-        for trig in faq_root.select(".trigger-button"):
+        for idx, trig in enumerate(faq_root.select(".trigger-button")):
             # 질문 추출
             q_span_list = trig.find_all("span")
             if len(q_span_list) >= 2:
@@ -53,7 +53,12 @@ class HugFaqCrawler(BaseCrawler):
                 url=page_url,
                 source_site=self.site_name,
                 crawled_at=0,  # crawl() 메서드에서 설정됨
-                metadata={"faq_type": "general", "parsed_from": "accordion"},
+                metadata={
+                    "faq_type": "general",
+                    "parsed_from": "accordion",
+                    "fragment_id": trig.get("id") or acc.get("id") or f"faq-{idx}",
+                    "position": idx,
+                },
             )
 
             items.append(result)

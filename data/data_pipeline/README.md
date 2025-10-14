@@ -15,7 +15,8 @@ data_pipeline/
 │   ├── text_cleaner.py      # 텍스트 정리
 │   └── deduplicator.py      # 중복 제거
 ├── storage/            # 데이터 저장 모듈
-│   └── local_storage.py     # 로컬 파일 저장
+│   ├── local_storage.py     # 로컬 파일 저장
+│   └── mongo_storage.py     # MongoDB 업서트 태스크
 ├── config/             # 설정 파일들
 │   └── sites_config.py      # 크롤링 대상 사이트 설정
 ├── scripts/            # 실행 스크립트
@@ -35,12 +36,22 @@ pip install -r requirements.txt
 ### 2. 단일 사이트 크롤링 실행
 
 ```bash
-# 대화형 모드로 실행
+# 대화형 모드 (사이트 선택 프롬프트)
 python scripts/run_single_crawl.py
 
-# 또는 직접 사이트 지정
-python scripts/run_single_crawl.py hug_faq
+# 바로 HUG FAQ 크롤링
+python scripts/run_single_crawl.py --site hug_faq
+
+# 산업재해보상보험법 등 다른 사이트 예시
+python scripts/run_single_crawl.py --site law_industrial_accident
+
+# MongoDB까지 적재하고 싶을 때 (HelloWorld-AI/foreigner_legalQA_v3)
+python scripts/run_single_crawl.py --site hug_faq --enable-mongo \
+  --mongo-uri "<your-mongodb-uri>" --mongo-db "HelloWorld-AI" \
+  --mongo-collection "foreigner_legalQA_v3"
 ```
+
+> 환경변수 `MONGODB_URI`, `MONGODB_DB`, `MONGODB_COLLECTION`을 미리 설정하면 CLI 인자를 생략할 수 있습니다.
 
 ### 3. Prefect UI에서 모니터링
 
@@ -111,7 +122,21 @@ if site_name == "my_site":
 1. **크롤링**: 웹사이트에서 원시 데이터 수집
 2. **텍스트 정리**: HTML 태그 제거, 공백 정리
 3. **중복 제거**: 지문 기반 중복 항목 제거
-4. **데이터 저장**: JSON, CSV, JSONL 형식으로 저장
+4. **데이터 저장**: JSON/CSV 로컬 저장 + 선택적 MongoDB 업서트
+
+### MongoDB 적재 옵션
+
+- `--enable-mongo` 플래그를 주면 MongoDB에 **같은 URL 문서를 모두 삭제한 뒤 새 데이터로 교체**
+- 기본 저장 위치는 **Database: `HelloWorld-AI` / Collection: `foreigner_legalQA_v3`**
+- MongoDB에는 기존 스키마(`title`, `contents`, `url`, `Embedding`)만 저장되며, `Embedding` 값이 없으면 빈 리스트가 들어갑니다.
+- OpenAI API를 통해 각 문서에 임베딩을 생성 후 `Embedding` 필드로 저장 (기본 모델: `text-embedding-3-large`)
+- 법령 사이트(law.go.kr)는 간헐적으로 접속이 제한될 수 있으므로, 404 등 오류가 발생하면 복구 후 재실행하세요.
+
+## 🔑 환경 변수
+
+- `MONGODB_URI`, `MONGODB_DB`, `MONGODB_COLLECTION`: MongoDB 연결 정보 (기본: `HelloWorld-AI` / `foreigner_legalQA_v3`)
+- `MONGODB_EMBEDDING_MODEL`, `MONGODB_EMBEDDING_FIELD`: 임베딩 관련 기본값
+- `OPENAI_API_KEY` (필수), `OPENAI_API_BASE`(선택): 신규 문서 임베딩 생성을 위한 OpenAI 인증
 
 ## 🔍 모니터링 및 로깅
 

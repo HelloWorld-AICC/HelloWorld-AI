@@ -7,6 +7,9 @@ Azure/local.settings.json
 Azure/__pycache__/
 Azure/.python_packages
 
+# 크롤링 data
+data/data_pipeline/crawled_data/
+
 # Created by https://www.toptal.com/developers/gitignore/api/python,dotenv,azurefunctions,macos,linux,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,dotenv,azurefunctions,macos,linux,windows
 
