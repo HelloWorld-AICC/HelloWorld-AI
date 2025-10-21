@@ -3,27 +3,33 @@
     "device" : "cuda:0",
     "data_config" : {
         "embedding_model" : "text-embedding-3-large",
-        "generate_model" : "gpt-4o",
+        "generate_model" : "gpt-4o-mini",
         "max_tokens" : 1024
     },
 
     "chat_config" : {
-        "model" : "gpt-4o",
-        "max_tokens" : 1024,
-        "top_k" : 3,
+        "model" : "gpt-4o-mini",
+        "max_tokens" : 2048,
+        "top_k" : 20,
+        "numCandidates" : 200,
         "prev_turns" : 6
     },
 
     "resume_config" : {
-        "model" : "gpt-4o",
+        "model" : "gpt-4o-mini",
         "max_tokens" : 4096,
         "temperature" : 0
+    },
+
+    "reranker_config" : {
+        "model" : "Dongjin-kr/ko-reranker",
+        "numCandidates" : 30
     },
 
     "path" : {
         "data_file_name": "data/postprocessed_data/industrial_accident.json",
         "db_name": "HelloWorld-AI",
-        "collection_name": "foreigner_legalQA_v2",
+        "collection_name": "foreigner_legalQA_v3",
         "index_name" : "vector_index"
     }
 }
